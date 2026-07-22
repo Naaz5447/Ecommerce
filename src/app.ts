@@ -1,31 +1,35 @@
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
-import compression from "compression";
-import cookieParser from "cookie-parser";
 import morgan from "morgan";
 
 import { healthRoutes } from "./modules/health";
-import authRoutes from "./modules/auth/auth.routes";
+import authRoutes from "./routes/auth.routes";
+import catalogRoutes from "./routes/catalog.routes";
 
 import { notFoundHandler } from "./common/handlers/not-found.handler";
 import { errorHandler } from "./common/handlers/error.handler";
+import { env } from "./config/env";
 
 const app = express();
 
-app.use(cors());
 app.use(helmet());
-app.use(compression());
+app.use(
+  cors({
+    origin: env.CORS_ORIGIN,
+    credentials: env.CORS_ORIGIN !== "*",
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cookieParser());
-
 app.use(morgan("dev"));
 
+app.use("/health", healthRoutes);
 app.use("/api/v1/health", healthRoutes);
-app.use("/api/v1/auth", authRoutes);
+app.use("/auth", authRoutes);
+app.use("/", catalogRoutes);
 
 app.use(notFoundHandler);
 
