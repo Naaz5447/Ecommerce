@@ -85,18 +85,30 @@ model Product {
 
   stockQuantity Int @default(0)
 
+  // Selling measurement
   unit String
+  // Example:
+  // piece, box, bag, packet, bottle, kg
 
-  weight String?
+  // Optional quantity inside one unit
+  quantity Decimal? @db.Decimal(10, 2)
+  // Example:
+  // 5 (5kg bag)
+  // 500 (500 gram packet)
+  // 1 (1 litre bottle)
+
+  // Quantity measurement type
+  quantityType String?
+  // Example:
+  // kg, gram, litre, ml
 
   image String?
 
   isFeatured Boolean @default(false)
   isActive   Boolean @default(true)
 
-  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-
-  images ProductImage[]
+  category Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  images   ProductImage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
