@@ -38,13 +38,12 @@ function imageFilter(
         cb(new Error("Only image files are allowed."));
     }
 }
-
-export function upload() {
+export function upload(folder?: string) {
     return multer({
         storage,
         fileFilter: imageFilter,
         limits: {
-            fileSize: 5 * 1024 * 1024,
+            fileSize: 200 * 1024,
         },
     });
 }
