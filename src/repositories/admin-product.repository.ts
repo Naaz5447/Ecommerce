@@ -3,59 +3,29 @@ import { prisma } from "../config/prisma";
 
 export class AdminProductRepository {
 
-
     async getProducts() {
-
         return prisma.product.findMany({
-
-            orderBy: {
-                createdAt: "desc"
-            },
-
+            where: { isActive: true },
+            orderBy: { createdAt: "desc", },
             include: {
-
                 category: {
-                    select: {
-                        id: true,
-                        name: true,
-                        slug: true
-                    }
+                    select: { id: true, name: true, slug: true },
                 },
-
                 images: {
-                    orderBy: {
-                        sortOrder: "asc"
-                    }
-                }
-
-            }
-
+                    orderBy: { sortOrder: "asc", },
+                },
+            },
         });
-
     }
 
-
-
-
-
     async getProductById(id: string) {
-
         return prisma.product.findUnique({
-
             where: {
-                id
+                id, isActive: true,
             },
-
             include: {
-
                 category: true,
-
-                images: {
-                    orderBy: {
-                        sortOrder: "asc"
-                    }
-                }
-
+                images: { orderBy: { sortOrder: "asc" } }
             }
 
         });
@@ -214,26 +184,10 @@ export class AdminProductRepository {
 
     }
 
-
-
-
-
-
     async deleteProduct(id: string) {
-
         return prisma.product.update({
-
-            where: {
-                id
-            },
-
-            data: {
-                isActive: false
-            }
-
+            where: { id },
+            data: { isActive: false }
         });
-
     }
-
-
 }
