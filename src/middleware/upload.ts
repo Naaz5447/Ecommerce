@@ -15,7 +15,7 @@ function createStorage(folder: string) {
         },
 
         filename(req, file, cb) {
-            const ext = path.extname(file.originalname);
+            const ext = path.extname(file.originalname).toLowerCase();
 
             cb(
                 null,
@@ -25,17 +25,49 @@ function createStorage(folder: string) {
     });
 }
 
+
 function imageFilter(
     req: Express.Request,
     file: Express.Multer.File,
     cb: multer.FileFilterCallback
 ) {
-    if (file.mimetype.startsWith("image/")) {
+    console.log("Uploaded file:");
+    console.log("name:", file.originalname);
+    console.log("mime:", file.mimetype);
+
+    const allowedMimeTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif",
+        "image/heic",
+        "image/heif",
+    ];
+
+    const allowedExtensions = [
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp",
+        ".gif",
+        ".heic",
+        ".heif",
+    ];
+
+    const ext = path
+        .extname(file.originalname)
+        .toLowerCase();
+
+    if (
+        allowedMimeTypes.includes(file.mimetype) ||
+        allowedExtensions.includes(ext)
+    ) {
         return cb(null, true);
     }
 
     cb(new Error("Only image files are allowed."));
 }
+
 
 export function upload(folder: string) {
     return multer({
@@ -44,7 +76,7 @@ export function upload(folder: string) {
         fileFilter: imageFilter,
 
         limits: {
-            fileSize: 5 * 1024 * 1024, // 5 MB
+            fileSize: 5 * 1024 * 1024,
         },
     });
 }
