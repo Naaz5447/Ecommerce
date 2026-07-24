@@ -4,6 +4,7 @@ export class AdminCategoryRepository {
 
     async getCategories() {
         return prisma.category.findMany({
+            where: { isActive: true },
             orderBy: { sortOrder: "asc", },
             include: {
                 _count: { select: { products: { where: { isActive: true, }, }, }, },

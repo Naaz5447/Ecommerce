@@ -17,72 +17,40 @@ export class AdminProductRepository {
             },
         });
     }
-
     async getProductById(id: string) {
         return prisma.product.findUnique({
-            where: {
-                id, isActive: true,
-            },
+            where: { id, isActive: true, },
             include: {
                 category: true,
                 images: { orderBy: { sortOrder: "asc" } }
             }
-
         });
-
     }
 
-
-
-
-
-
     async createProduct(data: any) {
-
         return prisma.product.create({
-
             data: {
-
                 categoryId: data.categoryId,
-
                 name: data.name,
-
                 slug: data.slug,
-
                 description: data.description,
-
                 sku: data.sku,
-
                 mrp: data.mrp,
-
                 price: data.price,
-
                 minimumOrderQuantity:
                     data.minimumOrderQuantity,
-
                 stockQuantity:
                     data.stockQuantity,
-
                 unit: data.unit,
-
                 quantity: data.quantity,
-
                 quantityType: data.quantityType,
                 image: data.image,
-
                 isFeatured: data.isFeatured,
-
             }
 
         });
 
     }
-
-
-
-
-
-
 
     async createImages(
         productId: string,
@@ -104,12 +72,6 @@ export class AdminProductRepository {
         });
 
     }
-
-
-
-
-
-
 
     async updateProduct(
         id: string,

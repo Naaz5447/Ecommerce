@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { AdminCategoryService } from "../services/admin-category.service";
+import { uploadToSupabase } from "../services/storage.service";
 
 const adminCategoryService = new AdminCategoryService();
 
@@ -34,9 +35,18 @@ export class AdminCategoryController {
 
     async createCategory(req: Request, res: Response) {
         try {
+            let imageUrl = null;
+
+            if (req.file) {
+                imageUrl = await uploadToSupabase(
+                    req.file,
+                    "categories"
+                );
+            }
+
             const category = await adminCategoryService.createCategory({
                 ...req.body,
-                image: req.file?.filename,
+                image: imageUrl,
             });
 
             res.status(201).json({
@@ -45,26 +55,46 @@ export class AdminCategoryController {
                 data: category,
             });
         } catch (error) {
-            throw error;
+            console.log(error);
+            res.status(500).json({
+                success: false,
+                message: "Failed to create category",
+            });
         }
     }
 
     async updateCategory(req: Request, res: Response) {
-        const category = await adminCategoryService.updateCategory(
-            String(req.params.id),
-            {
-                ...req.body,
-                image: req.file?.filename,
+        try {
+            let imageUrl;
+
+            if (req.file) {
+                imageUrl = await uploadToSupabase(
+                    req.file,
+                    "categories"
+                );
             }
-        );
 
-        res.json({
-            success: true,
-            message: "Category updated successfully",
-            data: category,
-        });
+            const category = await adminCategoryService.updateCategory(
+                String(req.params.id),
+                {
+                    ...req.body,
+                    image: imageUrl,
+                }
+            );
+
+            res.json({
+                success: true,
+                message: "Category updated successfully",
+                data: category,
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                success: false,
+                message: "Failed to update category",
+            });
+        }
     }
-
     async deleteCategory(req: Request, res: Response) {
         await adminCategoryService.deleteCategory(
             String(req.params.id)
