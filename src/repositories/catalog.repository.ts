@@ -37,18 +37,13 @@ export class CatalogRepository {
     const { page, limit, category, search } = params;
 
     return prisma.product.findMany({
-
       where: {
         isActive: true,
-
         ...(category && {
           categoryId: category,
         }),
         ...(search && {
-          name: {
-            contains: search,
-            mode: "insensitive",
-          },
+          name: { contains: search, mode: "insensitive", },
         }),
       },
       include: {
@@ -79,31 +74,18 @@ export class CatalogRepository {
 
   async getProductById(id: string) {
 
-    return prisma.product.findFirst({
-
-      where: {
-        id,
-        isActive: true,
-      },
-
-
+    return prisma.product.findUnique({
+      where: { id },
       include: {
-
         category: true,
-
         images: {
           orderBy: {
             sortOrder: "asc"
           }
         }
-
       }
-
     });
-
   }
-
-
 
   async getHomeData() {
 

@@ -7,6 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum OrderStatus {
+  PENDING
+  GENERATED
+  MODIFIED
+  CANCELLED
+}
+
+enum BillStatus {
+  PENDING
+  MODIFIED
+  PAID
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIALLY_PAID
+  PAID
+}
+
+enum NoteCategory {
+  GENERAL
+  PERSONAL
+  BUSINESS
+}
+
 enum UserRole {
   CUSTOMER
   ADMIN
@@ -81,9 +113,9 @@ model Product {
 
   price Decimal @db.Decimal(10, 2)
 
-  minimumOrderQuantity Int @default(1)
-
-  stockQuantity Int @default(0)
+  minimumOrderQuantity Int                   @default(1)
+  customerRates        CustomerProductRate[]
+  stockQuantity        Int                   @default(0)
 
   // Selling measurement
   unit String
@@ -110,8 +142,11 @@ model Product {
   category Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   images   ProductImage[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  orderItems OrderItem[]
+  billItems  BillItem[]
+  saleItems  SaleItem[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -163,4 +198,460 @@ model Offer {
 
   @@index([isActive])
   @@map("offers")
+}
+
+model Customer {
+  id      String  @id
+  name    String
+  mobile  String?
+  address String?
+
+  outstanding   Decimal @default(0) @db.Decimal(10, 2)
+  totalPurchase Decimal @default(0) @db.Decimal(10, 2)
+
+  totalSales    Decimal @default(0) @db.Decimal(10, 2)
+  totalReceived Decimal @default(0) @db.Decimal(10, 2)
+  totalPending  Decimal @default(0) @db.Decimal(10, 2)
+
+  customerProductRates CustomerProductRate[]
+
+  lastPurchaseDate DateTime?
+  lastPaymentDate  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders   Order[]
+  bills    Bill[]
+  sales    Sale[]
+  accounts Account[]
+}
+
+model BillingProduct {
+  id     String  @id @default(cuid())
+  name   String
+  rate   Decimal @default(0) @db.Decimal(10, 2)
+  unit   String?
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("billing_products")
+}
+
+model Sale {
+  id String @id @default(cuid())
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  customerName String
+
+  items   SaleItem[]
+  invoice Invoice?
+
+  totalAmount Decimal @db.Decimal(10, 2)
+  paidAmount  Decimal @db.Decimal(10, 2)
+  balance     Decimal @db.Decimal(10, 2)
+
+  paymentMode String?
+
+  date DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sales")
+}
+
+model Purchase {
+  id String @id @default(cuid())
+
+  party   String
+  product String
+
+  quantity Decimal @db.Decimal(10, 2)
+  rate     Decimal @db.Decimal(10, 2)
+  amount   Decimal @db.Decimal(10, 2)
+
+  purchaseDate DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("purchases")
+}
+
+model Note {
+  id String @id @default(cuid())
+
+  title   String
+  content String
+
+  category NoteCategory
+
+  color BigInt
+
+  pinned Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("notes")
+}
+
+model Employee {
+  id   String @id
+  name String
+
+  image         String?
+  dob           DateTime?
+  holidayDemand String?
+  designation   String?
+  gender        Gender?
+
+  joiningDate DateTime?
+
+  mobile String
+  aadhar String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bills      Bill[]
+  attendance EmployeeAttendance[]
+  advances   EmployeeAdvance[]
+}
+
+model Order {
+  id String @id
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  customerName String
+  area         String
+
+  orderDateTime DateTime
+  deliveryDate  DateTime?
+
+  status OrderStatus @default(PENDING)
+
+  isOrderModified   Boolean @default(false)
+  modificationCount Int     @default(0)
+  modifications     Json?
+
+  cancelledAt DateTime?
+
+  items OrderItem[]
+
+  bill Bill?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+
+  productName String
+
+  quantity Decimal @db.Decimal(10, 2)
+  rate     Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model Bill {
+  id String @id
+
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  customerName String
+  area         String
+
+  orderDateTime DateTime?
+  deliveryDate  DateTime?
+  billDateTime  DateTime
+
+  totalAmount Decimal @db.Decimal(10, 2)
+
+  status BillStatus @default(PENDING)
+
+  paymentStatus PaymentStatus @default(PENDING)
+
+  paidAmount    Decimal @default(0) @db.Decimal(10, 2)
+  pendingAmount Decimal @db.Decimal(10, 2)
+
+  isBillModified    Boolean @default(false)
+  modificationCount Int     @default(0)
+  modifications     Json?
+
+  cancelledAt DateTime?
+  paidAt      DateTime?
+
+  items           BillItem[]
+  payments        PaymentHistory[]
+  billAllocations BillAllocation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([employeeId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([billDateTime])
+  @@map("bills")
+}
+
+model BillItem {
+  id String @id @default(cuid())
+
+  billId String
+  bill   Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+
+  productName String
+
+  quantity Decimal @db.Decimal(10, 2)
+  rate     Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+
+  @@index([billId])
+  @@map("bill_items")
+}
+
+model Bank {
+  id String @id
+
+  bankName      String
+  accountName   String
+  accountNumber String
+
+  ifsc   String?
+  branch String?
+  upiId  String?
+
+  isActive Boolean @default(true)
+
+  accounts Account[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  expenses  Expense[]
+
+  @@map("banks")
+}
+
+model Account {
+  id String @id
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  customerName String
+
+  collectionDate DateTime
+
+  totalReceivedAmount Decimal @db.Decimal(10, 2)
+
+  cashAmount Decimal @default(0) @db.Decimal(10, 2)
+
+  onlinePayments Json?
+  cheques        Json?
+
+  remarks String?
+
+  isCancelled Boolean   @default(false)
+  cancelledAt DateTime?
+
+  bankId String?
+  bank   Bank?   @relation(fields: [bankId], references: [id])
+
+  billAllocations BillAllocation[]
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  paymentHistories PaymentHistory[]
+
+  @@map("accounts")
+}
+
+model BillAllocation {
+  id String @id @default(cuid())
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  billId String
+  bill   Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
+
+  amountApplied Decimal @db.Decimal(10, 2)
+
+  @@index([accountId])
+  @@index([billId])
+  @@map("bill_allocations")
+}
+
+model PaymentHistory {
+  id String @id @default(cuid())
+
+  billId String
+  bill   Bill   @relation(fields: [billId], references: [id], onDelete: Cascade)
+
+  accountId String?
+  account   Account? @relation(fields: [accountId], references: [id])
+
+  customerId String
+
+  paymentDate DateTime
+
+  amountApplied Decimal @db.Decimal(10, 2)
+
+  cashAmount Decimal @default(0) @db.Decimal(10, 2)
+
+  onlinePayments Json?
+  cheques        Json?
+
+  notes String?
+
+  createdAt DateTime @default(now())
+
+  @@index([billId])
+  @@index([accountId])
+  @@map("payment_history")
+}
+
+model Expense {
+  id String @id
+
+  title String
+
+  quantity Decimal @db.Decimal(10, 2)
+  rate     Decimal @db.Decimal(10, 2)
+  amount   Decimal @db.Decimal(10, 2)
+
+  spendBy String
+
+  expenseDate DateTime
+
+  onlinePayment Boolean @default(false)
+
+  bankId String?
+  bank   Bank?   @relation(fields: [bankId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("expenses")
+}
+
+model Invoice {
+  id String @id
+
+  saleId String @unique
+  sale   Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  invoiceNumber Int @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("invoices")
+}
+
+model SaleItem {
+  id String @id @default(cuid())
+
+  saleId String
+  sale   Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+
+  productName String
+
+  quantity Decimal @db.Decimal(10, 2)
+  rate     Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+
+  @@index([saleId])
+  @@map("sale_items")
+}
+
+model CustomerProductRate {
+  id String @id @default(cuid())
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  productName String
+
+  customerRate Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([customerId, productId])
+  @@map("customer_product_rates")
+}
+
+model EmployeeAttendance {
+  id String @id @default(cuid())
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  date DateTime
+
+  present Boolean
+
+  createdAt DateTime @default(now())
+
+  @@unique([employeeId, date])
+  @@map("employee_attendance")
+}
+
+model EmployeeAdvance {
+  id String @id @default(cuid())
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  amount Decimal @db.Decimal(10, 2)
+
+  date DateTime
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+
+  @@map("employee_advances")
 }

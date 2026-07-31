@@ -1,27 +1,15 @@
 import { Request, Response } from "express";
-import { prisma } from "../config/prisma";
+import { AdminDashboardService } from "../services/admin-dashboard.service";
+
+const adminDashboardService = new AdminDashboardService();
 
 export class AdminDashboardController {
     async getDashboard(req: Request, res: Response) {
-        const [categories, products] = await Promise.all([
-            prisma.category.count({
-                where: {
-                    isActive: true,
-                },
-            }),
-            prisma.product.count({
-                where: {
-                    isActive: true,
-                },
-            }),
-        ]);
+        const data = await adminDashboardService.getDashboard();
 
         res.json({
             success: true,
-            data: {
-                categories,
-                products,
-            },
+            data,
         });
     }
 }

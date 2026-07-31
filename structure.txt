@@ -1,222 +1,80 @@
 .
-├── dist
-│   ├── app.js
-│   ├── common
-│   ├── config
-│   ├── controllers
-│   ├── middleware
-│   ├── modules
-│   ├── repositories
-│   ├── routes
-│   ├── server.js
-│   ├── services
-│   ├── utils
-│   └── validators
-├── node_modules
-│   ├── @cspotcode
-│   ├── @jridgewell
-│   ├── @prisma
-│   ├── @standard-schema
-│   ├── @tsconfig
-│   ├── @types
-│   ├── accepts
-│   ├── acorn
-│   ├── acorn-walk
-│   ├── anymatch
-│   ├── append-field
-│   ├── arg
-│   ├── balanced-match
-│   ├── basic-auth
-│   ├── bcrypt
-│   ├── binary-extensions
-│   ├── body-parser
-│   ├── brace-expansion
-│   ├── braces
-│   ├── buffer-equal-constant-time
-│   ├── buffer-from
-│   ├── busboy
-│   ├── bytes
-│   ├── c12
-│   ├── call-bind-apply-helpers
-│   ├── call-bound
-│   ├── chokidar
-│   ├── citty
-│   ├── concat-map
-│   ├── concat-stream
-│   ├── confbox
-│   ├── consola
-│   ├── content-disposition
-│   ├── content-type
-│   ├── cookie
-│   ├── cors
-│   ├── create-require
-│   ├── debug
-│   ├── deepmerge-ts
-│   ├── defu
-│   ├── depd
-│   ├── destr
-│   ├── diff
-│   ├── dotenv
-│   ├── dunder-proto
-│   ├── dynamic-dedupe
-│   ├── ecdsa-sig-formatter
-│   ├── ee-first
-│   ├── effect
-│   ├── empathic
-│   ├── encodeurl
-│   ├── es-define-property
-│   ├── es-errors
-│   ├── es-object-atoms
-│   ├── escape-html
-│   ├── etag
-│   ├── express
-│   ├── express-validator
-│   ├── exsolve
-│   ├── fast-check
-│   ├── fill-range
-│   ├── finalhandler
-│   ├── forwarded
-│   ├── fresh
-│   ├── fs.realpath
-│   ├── fsevents
-│   ├── function-bind
-│   ├── get-intrinsic
-│   ├── get-proto
-│   ├── giget
-│   ├── glob
-│   ├── glob-parent
-│   ├── gopd
-│   ├── has-symbols
-│   ├── hasown
-│   ├── helmet
-│   ├── http-errors
-│   ├── iconv-lite
-│   ├── inflight
-│   ├── inherits
-│   ├── ipaddr.js
-│   ├── is-binary-path
-│   ├── is-core-module
-│   ├── is-extglob
-│   ├── is-glob
-│   ├── is-number
-│   ├── is-promise
-│   ├── jiti
-│   ├── jsonwebtoken
-│   ├── jwa
-│   ├── jws
-│   ├── lodash
-│   ├── lodash.includes
-│   ├── lodash.isboolean
-│   ├── lodash.isinteger
-│   ├── lodash.isnumber
-│   ├── lodash.isplainobject
-│   ├── lodash.isstring
-│   ├── lodash.once
-│   ├── make-error
-│   ├── math-intrinsics
-│   ├── media-typer
-│   ├── merge-descriptors
-│   ├── mime-db
-│   ├── mime-types
-│   ├── minimatch
-│   ├── minimist
-│   ├── mkdirp
-│   ├── morgan
-│   ├── ms
-│   ├── multer
-│   ├── node-addon-api
-│   ├── node-fetch-native
-│   ├── node-gyp-build
-│   ├── normalize-path
-│   ├── nypm
-│   ├── object-assign
-│   ├── object-inspect
-│   ├── ohash
-│   ├── on-finished
-│   ├── on-headers
-│   ├── once
-│   ├── parseurl
-│   ├── path-is-absolute
-│   ├── path-parse
-│   ├── path-to-regexp
-│   ├── pathe
-│   ├── perfect-debounce
-│   ├── picomatch
-│   ├── pkg-types
-│   ├── prisma
-│   ├── proxy-addr
-│   ├── pure-rand
-│   ├── qs
-│   ├── range-parser
-│   ├── raw-body
-│   ├── rc9
-│   ├── readable-stream
-│   ├── readdirp
-│   ├── resolve
-│   ├── rimraf
-│   ├── router
-│   ├── safe-buffer
-│   ├── safer-buffer
-│   ├── semver
-│   ├── send
-│   ├── serve-static
-│   ├── setprototypeof
-│   ├── side-channel
-│   ├── side-channel-list
-│   ├── side-channel-map
-│   ├── side-channel-weakmap
-│   ├── source-map
-│   ├── source-map-support
-│   ├── statuses
-│   ├── streamsearch
-│   ├── string_decoder
-│   ├── strip-bom
-│   ├── strip-json-comments
-│   ├── supports-preserve-symlinks-flag
-│   ├── tinyexec
-│   ├── to-regex-range
-│   ├── toidentifier
-│   ├── tree-kill
-│   ├── ts-node
-│   ├── ts-node-dev
-│   ├── tsconfig
-│   ├── type-is
-│   ├── typedarray
-│   ├── typescript
-│   ├── undici-types
-│   ├── unpipe
-│   ├── util-deprecate
-│   ├── uuid
-│   ├── v8-compile-cache-lib
-│   ├── validator
-│   ├── vary
-│   ├── wrappy
-│   ├── xtend
-│   ├── yn
-│   └── zod
 ├── package-lock.json
 ├── package.json
 ├── prisma
 │   ├── migrations
+│   │   ├── 20260726092654_init
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
 │   ├── schema.prisma
 │   └── seed.ts
 ├── prisma.config.ts
 ├── src
 │   ├── app.ts
 │   ├── common
+│   │   ├── handlers
+│   │   │   ├── async.handler.ts
+│   │   │   ├── error.handler.ts
+│   │   │   └── not-found.handler.ts
+│   │   └── responses
+│   │       └── api.response.ts
 │   ├── config
+│   │   ├── env.ts
+│   │   ├── prisma.ts
+│   │   └── supabase.ts
 │   ├── controllers
+│   │   ├── admin-category.controller.ts
+│   │   ├── admin-dashboard.controller.ts
+│   │   ├── admin-product.controller.ts
+│   │   ├── auth.controller.ts
+│   │   └── catalog.controller.ts
 │   ├── middleware
+│   │   ├── auth.middleware.ts
+│   │   ├── role.middleware.ts
+│   │   ├── upload.ts
+│   │   ├── validate-request.ts
+│   │   └── validate.ts
 │   ├── modules
+│   │   └── health
+│   │       ├── health.controller.ts
+│   │       ├── health.routes.ts
+│   │       └── index.ts
 │   ├── repositories
+│   │   ├── admin-category.repository.ts
+│   │   ├── admin-product.repository.ts
+│   │   ├── catalog.repository.ts
+│   │   ├── otp.repository.ts
+│   │   └── user.repository.ts
 │   ├── routes
+│   │   ├── admin-category.routes.ts
+│   │   ├── admin-dashboard.routes.ts
+│   │   ├── admin-product.routes.ts
+│   │   ├── auth.routes.ts
+│   │   └── catalog.routes.ts
 │   ├── server.ts
 │   ├── services
+│   │   ├── admin-category.service.ts
+│   │   ├── admin-product.service.ts
+│   │   ├── auth.service.ts
+│   │   ├── catalog.service.ts
+│   │   └── storage.service.ts
 │   ├── types
+│   │   └── express.d.ts
 │   ├── utils
+│   │   ├── app-error.ts
+│   │   ├── image-url.ts
+│   │   ├── jwt.ts
+│   │   ├── otp.ts
+│   │   └── slug.ts
 │   ├── validations
+│   │   ├── admin-category.validation.ts
+│   │   └── admin-product.validation.ts
 │   └── validators
+│       └── auth.validators.ts
 ├── structure.txt
-└── tsconfig.json
+├── tsconfig.json
+└── uploads
+    ├── categories
+    └── products
 
-209 directories, 11 files
+23 directories, 55 files
