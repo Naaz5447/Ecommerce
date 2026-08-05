@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma";
+import { generateCode } from "../utils/code-generator";
 
 export class CustomerRepository {
     async getCustomers() {
@@ -18,9 +19,15 @@ export class CustomerRepository {
     }
 
     async createCustomer(data: any) {
+
+        const customerCode  = await generateCode(
+            "CUSTOMER",
+            "CUS"
+        );
+
         return prisma.customer.create({
             data: {
-                id: data.id,
+                customerCode ,
                 name: data.name,
                 mobile: data.mobile,
                 address: data.address,

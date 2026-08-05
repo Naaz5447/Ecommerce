@@ -6,7 +6,7 @@ export function getImageUrl(path?: string | null) {
 
 
     const baseUrl =
-        process.env.BASE_URL || "http://localhost:3000";
+        process.env.BASE_URL || "http://localhost:4111";
 
 
     if(path.startsWith("http")) {

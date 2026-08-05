@@ -13,12 +13,25 @@ if (missingEnv.length > 0) {
 
 const PORT = env.PORT;
 
-app.listen(PORT, () => {
-  console.log("");
-  console.log("====================================");
-  console.log("Mahadev Packaging Backend Started");
-  console.log(`Environment : ${env.NODE_ENV}`);
-  console.log(`Server      : http://localhost:${PORT}`);
-  console.log("====================================");
-  console.log("");
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`
+====================================
+Mahadev Packaging Backend Started
+Environment : ${process.env.NODE_ENV}
+Server      : http://localhost:${PORT}
+====================================
+`);
 });
+
+
+
+// app.listen(PORT, () => {
+//   console.log("");
+//   console.log("====================================");
+//   console.log("Mahadev Packaging Backend Started");
+//   console.log(`Environment : ${env.NODE_ENV}`);
+//   console.log(`Server      : http://localhost:${PORT}`);
+//   console.log("====================================");
+//   console.log("");
+// });

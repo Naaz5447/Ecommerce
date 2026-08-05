@@ -67,7 +67,7 @@ export class AdminProductController {
             console.log(error);
             res.status(500).json({
                 success: false,
-                message: "Failed to create product"
+                message: "Failed to create profffduct"
             });
         }
     }
