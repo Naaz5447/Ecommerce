@@ -34,9 +34,13 @@ enum PaymentStatus {
 }
 
 enum NoteCategory {
-  GENERAL
-  PERSONAL
-  BUSINESS
+    GENERAL
+    PERSONAL
+    WORK
+    FINANCE
+    IDEAS
+    REMINDER
+    OTHER
 }
 
 enum UserRole {
@@ -207,6 +211,7 @@ model Customer {
   name    String
   mobile  String?
   address String?
+  area    String? 
 
   outstanding   Decimal @default(0) @db.Decimal(10, 2)
   totalPurchase Decimal @default(0) @db.Decimal(10, 2)
@@ -548,7 +553,7 @@ model PaymentHistory {
 }
 
 model Expense {
-  id String @id
+  id String @id @default(uuid())
 
   title String
 
@@ -557,7 +562,6 @@ model Expense {
   amount   Decimal @db.Decimal(10, 2)
 
   spendBy String
-
   expenseDate DateTime
 
   onlinePayment Boolean @default(false)

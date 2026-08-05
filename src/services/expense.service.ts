@@ -13,11 +13,10 @@ export class ExpenseService {
 
     async createExpense(data: any) {
         return expenseRepository.createExpense({
-            id: data.id,
             title: data.title,
             quantity: Number(data.quantity),
             rate: Number(data.rate),
-            amount: Number(data.amount),
+            amount: Number(data.quantity) * Number(data.rate),
             spendBy: data.spendBy,
             expenseDate: new Date(data.expenseDate),
             onlinePayment:

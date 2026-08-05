@@ -20,29 +20,34 @@ export class CustomerRepository {
 
     async createCustomer(data: any) {
 
-        const customerCode  = await generateCode(
+        const customerCode = await generateCode(
             "CUSTOMER",
             "CUS"
         );
 
         return prisma.customer.create({
             data: {
-                customerCode ,
+                customerCode,
                 name: data.name,
                 mobile: data.mobile,
                 address: data.address,
+                area: data.area,
+            },
+        });
+    }
+    
+    async updateCustomer(id: string, data: any) {
+        return prisma.customer.update({
+            where: { id },
+            data: {
+                ...(data.name !== undefined && { name: data.name }),
+                ...(data.mobile !== undefined && { mobile: data.mobile }),
+                ...(data.address !== undefined && { address: data.address }),
+                ...(data.area !== undefined && { area: data.area }),
             },
         });
     }
 
-    async updateCustomer(id: string, data: any) {
-        return prisma.customer.update({
-            where: {
-                id,
-            },
-            data,
-        });
-    }
 
     async deleteCustomer(id: string) {
         return prisma.customer.delete({

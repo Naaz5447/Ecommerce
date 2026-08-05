@@ -17,6 +17,7 @@ export class CustomerService {
             name: data.name,
             mobile: data.mobile,
             address: data.address,
+            area: data.area,
         });
     }
 
@@ -25,6 +26,7 @@ export class CustomerService {
             name: data.name,
             mobile: data.mobile,
             address: data.address,
+            area: data.area,
         });
     }
 

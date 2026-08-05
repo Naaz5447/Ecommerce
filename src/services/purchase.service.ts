@@ -12,23 +12,30 @@ export class PurchaseService {
     }
 
     async createPurchase(data: any) {
+        const quantity = Number(data.quantity);
+        const rate = Number(data.rate);
+
         return purchaseRepository.createPurchase({
             party: data.party,
             product: data.product,
-            quantity: Number(data.quantity),
-            rate: Number(data.rate),
-            amount: Number(data.amount),
+            quantity,
+            rate,
+            amount: quantity * rate,
             purchaseDate: new Date(data.purchaseDate),
         });
     }
 
     async updatePurchase(id: string, data: any) {
+        const quantity = Number(data.quantity);
+        const rate = Number(data.rate);
+
+
         return purchaseRepository.updatePurchase(id, {
             party: data.party,
             product: data.product,
-            quantity: Number(data.quantity),
-            rate: Number(data.rate),
-            amount: Number(data.amount),
+            quantity,
+            rate,
+            amount: quantity * rate,
             purchaseDate: data.purchaseDate
                 ? new Date(data.purchaseDate)
                 : undefined,

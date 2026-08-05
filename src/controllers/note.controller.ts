@@ -5,11 +5,14 @@ const noteService = new NoteService();
 
 export class NoteController {
     async getNotes(req: Request, res: Response) {
-        const data = await noteService.getNotes();
+        const notes = await noteService.getNotes();
 
         res.json({
             success: true,
-            data,
+            data: notes.map(note => ({
+                ...note,
+                color: note.color.toString(),
+            })),
         });
     }
 
@@ -25,17 +28,10 @@ export class NoteController {
 
         res.json({
             success: true,
-            data: note,
-        });
-    }
-
-    async createNote(req: Request, res: Response) {
-        const note = await noteService.createNote(req.body);
-
-        res.status(201).json({
-            success: true,
-            message: "Note created successfully",
-            data: note,
+            data: {
+                ...note,
+                color: note.color.toString(),
+            },
         });
     }
 
@@ -48,7 +44,24 @@ export class NoteController {
         res.json({
             success: true,
             message: "Note updated successfully",
-            data: note,
+            data: {
+                ...note,
+                color: note.color.toString(),
+            },
+        });
+    }
+
+
+    async createNote(req: Request, res: Response) {
+        const note = await noteService.createNote(req.body);
+
+        res.status(201).json({
+            success: true,
+            message: "Note created successfully",
+            data: {
+                ...note,
+                color: note.color.toString(),
+            },
         });
     }
 
