@@ -56,49 +56,57 @@ async function main() {
   }
 
 
-  await prisma.product.createMany({
-    data: [
-      {
-        categoryId: boxes.id,
-        name: "5 Ply Corrugated Box",
-        slug: "5-ply-corrugated-box",
-        description: "Heavy duty corrugated box.",
-        sku: "BOX-5PLY-001",
-        price: 45,
-        discountPrice: 39,
-        minimumOrderQuantity: 10,
-        stockQuantity: 500,
-        unit: "piece",
-        image: "/uploads/products/box.jpg",
-        isFeatured: true,
-      },
-      {
-        categoryId: bags.id,
-        name: "Courier Packaging Bag",
-        slug: "courier-packaging-bag",
-        description: "Water resistant courier bags.",
-        sku: "BAG-001",
-        price: 8,
-        discountPrice: 6,
-        minimumOrderQuantity: 100,
-        stockQuantity: 5000,
-        unit: "piece",
-      },
-      {
-        categoryId: bubble.id,
-        name: "Bubble Wrap Roll",
-        slug: "bubble-wrap-roll",
-        description: "Protection for fragile products.",
-        sku: "BUBBLE-001",
-        price: 350,
-        discountPrice: 320,
-        minimumOrderQuantity: 5,
-        stockQuantity: 200,
-        unit: "roll",
-        isFeatured: true,
-      },
-    ],
-  });
+await prisma.product.createMany({
+  data: [
+    {
+      categoryId: boxes.id,
+      name: "5 Ply Corrugated Box",
+      slug: "5-ply-corrugated-box",
+      description: "Heavy duty corrugated box.",
+      sku: "BOX-5PLY-001",
+
+      mrp: 45,
+      price: 39,
+
+      minimumOrderQuantity: 10,
+      stockQuantity: 500,
+      unit: "piece",
+      image: "/uploads/products/box.jpg",
+      isFeatured: true,
+    },
+
+    {
+      categoryId: bags.id,
+      name: "Courier Packaging Bag",
+      slug: "courier-packaging-bag",
+      description: "Water resistant courier bags.",
+      sku: "BAG-001",
+
+      mrp: 8,
+      price: 6,
+
+      minimumOrderQuantity: 100,
+      stockQuantity: 5000,
+      unit: "piece",
+    },
+
+    {
+      categoryId: bubble.id,
+      name: "Bubble Wrap Roll",
+      slug: "bubble-wrap-roll",
+      description: "Protection for fragile products.",
+      sku: "BUBBLE-001",
+
+      mrp: 350,
+      price: 320,
+
+      minimumOrderQuantity: 5,
+      stockQuantity: 200,
+      unit: "roll",
+      isFeatured: true,
+    },
+  ],
+});
 
 
   const products = await prisma.product.findMany();

@@ -310,6 +310,7 @@ model Note {
 
 model Employee {
   id   String @id
+  employeeId String @unique
   name String
 
   image         String?

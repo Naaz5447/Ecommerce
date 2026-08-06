@@ -6,11 +6,10 @@ const employeeService = new EmployeeService();
 
 export class EmployeeController {
     async getEmployees(req: Request, res: Response) {
-        const data = await employeeService.getEmployees();
-
+        const employees = await employeeService.getEmployees();
         res.json({
             success: true,
-            data,
+            data: employees,
         });
     }
 
@@ -18,14 +17,12 @@ export class EmployeeController {
         const employee = await employeeService.getEmployee(
             String(req.params.id)
         );
-
         if (!employee) {
             return res.status(404).json({
                 success: false,
                 message: "Employee not found",
             });
         }
-
         res.json({
             success: true,
             data: employee,
@@ -34,16 +31,13 @@ export class EmployeeController {
 
     async createEmployee(req: Request, res: Response) {
         let image = null;
-
         if (req.file) {
             image = await uploadToSupabase(req.file, "employees");
         }
-
         const employee = await employeeService.createEmployee({
             ...req.body,
             image,
         });
-
         res.status(201).json({
             success: true,
             message: "Employee created successfully",
@@ -53,11 +47,9 @@ export class EmployeeController {
 
     async updateEmployee(req: Request, res: Response) {
         let image;
-
         if (req.file) {
             image = await uploadToSupabase(req.file, "employees");
         }
-
         const employee = await employeeService.updateEmployee(
             String(req.params.id),
             {
