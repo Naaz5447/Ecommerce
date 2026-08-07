@@ -22,6 +22,9 @@ import saleRoutes from "./routes/sale.routes";
 import transactionRoutes from "./routes/transaction.routes";
 import billRoutes from "./routes/bill.routes";
 import paymentRoutes from "./routes/payment.routes";
+import areaRoutes from "./routes/area.routes";
+import empDesignationRoutes from "./routes/employeeDesignation.routes";
+
 
 import { notFoundHandler } from "./common/handlers/not-found.handler";
 import { errorHandler } from "./common/handlers/error.handler";
@@ -61,6 +64,9 @@ app.use("/sales", saleRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/bills", billRoutes);
 app.use("/payments", paymentRoutes);
+app.use("/areas", areaRoutes);
+app.use("/employeeDesignation", empDesignationRoutes);
+
 
 app.use(notFoundHandler);
 

@@ -10,24 +10,11 @@ export class CustomerService {
     async getCustomer(id: string) {
         return customerRepository.getCustomerById(id);
     }
-
     async createCustomer(data: any) {
-        return customerRepository.createCustomer({
-            id: data.id,
-            name: data.name,
-            mobile: data.mobile,
-            address: data.address,
-            area: data.area,
-        });
+        return customerRepository.createCustomer(data);
     }
-
     async updateCustomer(id: string, data: any) {
-        return customerRepository.updateCustomer(id, {
-            name: data.name,
-            mobile: data.mobile,
-            address: data.address,
-            area: data.area,
-        });
+        return customerRepository.updateCustomer(id, data);
     }
 
     async deleteCustomer(id: string) {

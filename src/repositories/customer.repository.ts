@@ -7,6 +7,9 @@ export class CustomerRepository {
             orderBy: {
                 name: "asc",
             },
+            include: {
+                area: true,
+            },
         });
     }
 
@@ -15,15 +18,19 @@ export class CustomerRepository {
             where: {
                 id,
             },
+            include: {
+                area: true,
+            },
         });
     }
 
     async createCustomer(data: any) {
-
+        
         const customerCode = await generateCode(
             "CUSTOMER",
             "CUS"
         );
+        console.log(data);
 
         return prisma.customer.create({
             data: {
@@ -31,11 +38,11 @@ export class CustomerRepository {
                 name: data.name,
                 mobile: data.mobile,
                 address: data.address,
-                area: data.area,
+                areaId: data.areaId || null,
             },
         });
     }
-    
+
     async updateCustomer(id: string, data: any) {
         return prisma.customer.update({
             where: { id },
@@ -43,7 +50,7 @@ export class CustomerRepository {
                 ...(data.name !== undefined && { name: data.name }),
                 ...(data.mobile !== undefined && { mobile: data.mobile }),
                 ...(data.address !== undefined && { address: data.address }),
-                ...(data.area !== undefined && { area: data.area }),
+                ...(data.areaId !== undefined && { areaId: data.areaId }),
             },
         });
     }
