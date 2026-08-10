@@ -1,8 +1,18 @@
 import { prisma } from "../config/prisma";
 
 export class OrderRepository {
-    async getOrders() {
+    async getOrders(date?: string) {
+        let where = {};
+
+        if (date) {
+            const startDate = new Date(`${date}T00:00:00.000`);
+            const endDate = new Date(`${date}T00:00:00.000`);
+            endDate.setDate(endDate.getDate() + 1);
+            where = { orderDateTime: { gte: startDate, lt: endDate } };
+        }
+
         return prisma.order.findMany({
+            where,
             include: {
                 customer: true,
                 items: {

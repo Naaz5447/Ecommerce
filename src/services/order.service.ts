@@ -3,8 +3,8 @@ import { OrderRepository } from "../repositories/order.repository";
 const orderRepository = new OrderRepository();
 
 export class OrderService {
-    async getOrders() {
-        return orderRepository.getOrders();
+    async getOrders(date?: string) {
+        return orderRepository.getOrders(date);
     }
 
     async getOrder(id: string) {

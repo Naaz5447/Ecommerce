@@ -353,6 +353,7 @@ model Employee {
 
 model Order {
   id String @id @default(uuid())
+  orderNumber Int @unique @default(autoincrement())
 
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id])
@@ -402,7 +403,7 @@ model OrderItem {
 }
 
 model Bill {
-  id String @id
+  id String @id @default(uuid())
 
   orderId String @unique
   order   Order  @relation(fields: [orderId], references: [id])

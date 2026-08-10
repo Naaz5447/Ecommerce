@@ -10,10 +10,22 @@ export class BillService {
     getBill(id: string) {
         return repository.getBill(id);
     }
+    
+    async createBill(data: any) {
+        const { orderId, employeeId } = data;
+        if (!orderId) {
+            throw new Error("orderId is required");
+        }
+        if (!employeeId) {
+            throw new Error("employeeId is required");
+        }
 
-    createBill(data: any) {
-        return repository.createBill(data);
+        return repository.createBill({
+            orderId,
+            employeeId,
+        });
     }
+
 
     updateBill(id: string, data: any) {
         return repository.updateBill(id, data);

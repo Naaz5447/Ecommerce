@@ -4,14 +4,20 @@ import { OrderService } from "../services/order.service";
 const orderService = new OrderService();
 
 export class OrderController {
+    
     async getOrders(req: Request, res: Response) {
-        const data = await orderService.getOrders();
+        const date = req.query.date
+            ? String(req.query.date)
+            : undefined;
+
+        const data = await orderService.getOrders(date);
 
         res.json({
             success: true,
             data,
         });
     }
+
 
     async getOrder(req: Request, res: Response) {
         const order = await orderService.getOrder(
