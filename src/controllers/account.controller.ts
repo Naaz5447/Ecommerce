@@ -4,64 +4,191 @@ import { AccountService } from "../services/account.service";
 const accountService = new AccountService();
 
 export class AccountController {
-    async getAccounts(req: Request, res: Response) {
-        const data = await accountService.getAccounts();
 
-        res.json({
-            success: true,
-            data,
-        });
-    }
+    // ============================================================
+    // GET /accounts
+    // ============================================================
+    async getAccounts(
+        req: Request,
+        res: Response
+    ) {
+        try {
+            const data =
+                await accountService.getAccounts();
 
-    async getAccount(req: Request, res: Response) {
-        const account = await accountService.getAccount(
-            String(req.params.id)
-        );
-
-        if (!account) {
-            return res.status(404).json({
+            res.json({
+                success: true,
+                data,
+            });
+        } catch (error: any) {
+            res.status(500).json({
                 success: false,
-                message: "Account not found",
+                message: error.message,
             });
         }
-
-        res.json({
-            success: true,
-            data: account,
-        });
     }
 
-    async createAccount(req: Request, res: Response) {
-        const account = await accountService.createAccount(req.body);
+    // ============================================================
+    // GET /accounts/customer/:customerId/outstanding-bills
+    // ============================================================
+    async getOutstandingBills(
+        req: Request,
+        res: Response
+    ) {
+        try {
+            const data =
+                await accountService.getOutstandingBills(
+                    String(req.params.customerId)
+                );
 
-        res.status(201).json({
-            success: true,
-            message: "Account created successfully",
-            data: account,
-        });
+            res.json({
+                success: true,
+                data,
+            });
+        } catch (error: any) {
+            res.status(500).json({
+                success: false,
+                message: error.message,
+            });
+        }
     }
 
-    async updateAccount(req: Request, res: Response) {
-        const account = await accountService.updateAccount(
-            String(req.params.id),
-            req.body
-        );
+    // ============================================================
+    // GET /accounts/:id
+    // ============================================================
+    async getAccount(
+        req: Request,
+        res: Response
+    ) {
+        try {
+            const account =
+                await accountService.getAccount(
+                    String(req.params.id)
+                );
 
-        res.json({
-            success: true,
-            message: "Account updated successfully",
-            data: account,
-        });
+            if (!account) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Account not found",
+                });
+            }
+
+            res.json({
+                success: true,
+                data: account,
+            });
+        } catch (error: any) {
+            res.status(500).json({
+                success: false,
+                message: error.message,
+            });
+        }
     }
 
-    async deleteAccount(req: Request, res: Response) {
-        await accountService.deleteAccount(
-            String(req.params.id)
-        );
+    // ============================================================
+    // POST /accounts
+    // ============================================================
+    async createAccount(
+        req: Request,
+        res: Response
+    ) {
+        try {
+            const account =
+                await accountService.createAccount(
+                    req.body
+                );
 
-        res.json({
-            success: true,
-            message: "Account cancelled successfully",
-        });
+            res.status(201).json({
+                success: true,
+                message:
+                    "Account created successfully",
+                data: account,
+            });
+        } catch (error: any) {
+            res.status(400).json({
+                success: false,
+                message: error.message,
+            });
+        }
+    }
+
+    // ============================================================
+    // PUT /accounts/:id
+    // ============================================================
+    async updateAccount(
+        req: Request,
+        res: Response
+    ) {
+        try {
+            const account =
+                await accountService.updateAccount(
+                    String(req.params.id),
+                    req.body
+                );
+
+            res.json({
+                success: true,
+                message:
+                    "Account updated successfully",
+                data: account,
+            });
+        } catch (error: any) {
+            res.status(400).json({
+                success: false,
+                message: error.message,
+            });
+        }
+    }
+
+    // ============================================================
+    // DELETE /accounts/:id
+    // ============================================================
+    async deleteAccount(
+        req: Request,
+        res: Response
+    ) {
+        try {
+            await accountService.deleteAccount(
+                String(req.params.id)
+            );
+
+            res.json({
+                success: true,
+                message:
+                    "Account cancelled successfully",
+            });
+        } catch (error: any) {
+            res.status(400).json({
+                success: false,
+                message: error.message,
+            });
+        }
+    }
+
+    // ============================================================
+    // POST /accounts/receive-payment
+    // ============================================================
+    async receivePayment(
+        req: Request,
+        res: Response
+    ) {
+        try {
+            const account =
+                await accountService.receivePayment(
+                    req.body
+                );
+
+            res.status(201).json({
+                success: true,
+                message:
+                    "Payment received successfully",
+                data: account,
+            });
+        } catch (error: any) {
+            res.status(400).json({
+                success: false,
+                message: error.message,
+            });
+        }
     }
 }

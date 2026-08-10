@@ -6,11 +6,15 @@ export class BillService {
     getBills() {
         return repository.getBills();
     }
+    getBillsByCustomer(customerId: string) {
+        return repository.getBillsByCustomer(customerId);
+    }
+
 
     getBill(id: string) {
         return repository.getBill(id);
     }
-    
+
     async createBill(data: any) {
         const { orderId, employeeId } = data;
         if (!orderId) {
@@ -26,12 +30,11 @@ export class BillService {
         });
     }
 
-
+    cancelBill(id: string) {
+        return repository.cancelBill(id);
+    }
     updateBill(id: string, data: any) {
         return repository.updateBill(id, data);
     }
 
-    deleteBill(id: string) {
-        return repository.deleteBill(id);
-    }
 }

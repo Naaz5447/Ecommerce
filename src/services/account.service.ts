@@ -3,57 +3,139 @@ import { AccountRepository } from "../repositories/account.repository";
 const accountRepository = new AccountRepository();
 
 export class AccountService {
+    // ============================================================
+    // GET ALL
+    // ============================================================
     async getAccounts() {
         return accountRepository.getAccounts();
     }
 
+    // ============================================================
+    // GET OUTSTANDING BILLS
+    // ============================================================
+    async getOutstandingBills(customerId: string) {
+        return accountRepository.getOutstandingBills(customerId);
+    }
+
+    // ============================================================
+    // GET SINGLE ACCOUNT
+    // ============================================================
     async getAccount(id: string) {
         return accountRepository.getAccountById(id);
     }
 
+    // ============================================================
+    // CREATE ACCOUNT
+    // ============================================================
     async createAccount(data: any) {
         return accountRepository.createAccount({
             id: crypto.randomUUID(),
 
             customerId: data.customerId,
+
             customerName: data.customerName,
 
-            collectionDate: data.collectionDate,
+            collectionDate:
+                data.collectionDate
+                    ? new Date(data.collectionDate)
+                    : new Date(),
 
-            totalReceivedAmount: Number(data.totalReceivedAmount),
+            totalReceivedAmount:
+                Number(data.totalReceivedAmount || 0),
 
-            cashAmount: Number(data.cashAmount || 0),
+            cashAmount:
+                Number(data.cashAmount || 0),
 
-            onlinePayments: data.onlinePayments,
-            cheques: data.cheques,
+            onlinePayments:
+                data.onlinePayments || [],
 
-            remarks: data.remarks,
+            cheques:
+                data.cheques || [],
 
-            bankId: data.bankId || null,
+            remarks:
+                data.remarks || "",
+
+            bankId:
+                data.bankId || null,
+
+            isCancelled: false,
         });
     }
 
-    async updateAccount(id: string, data: any) {
-        return accountRepository.updateAccount(id, {
-            customerId: data.customerId,
-            customerName: data.customerName,
+    // ============================================================
+    // UPDATE ACCOUNT
+    // ============================================================
+    async updateAccount(
+        id: string,
+        data: any
+    ) {
+        return accountRepository.updateAccount(
+            id,
+            {
+                customerId:
+                    data.customerId,
 
-            collectionDate: data.collectionDate,
+                customerName:
+                    data.customerName,
 
-            totalReceivedAmount: Number(data.totalReceivedAmount),
+                collectionDate:
+                    data.collectionDate
+                        ? new Date(data.collectionDate)
+                        : undefined,
 
-            cashAmount: Number(data.cashAmount || 0),
+                totalReceivedAmount:
+                    Number(
+                        data.totalReceivedAmount || 0
+                    ),
 
-            onlinePayments: data.onlinePayments,
-            cheques: data.cheques,
+                cashAmount:
+                    Number(
+                        data.cashAmount || 0
+                    ),
 
-            remarks: data.remarks,
+                onlinePayments:
+                    data.onlinePayments || [],
 
-            bankId: data.bankId || null,
-        });
+                cheques:
+                    data.cheques || [],
+
+                remarks:
+                    data.remarks || "",
+
+                bankId:
+                    data.bankId || null,
+            }
+        );
     }
 
+    // ============================================================
+    // CANCEL ACCOUNT
+    // ============================================================
     async deleteAccount(id: string) {
         return accountRepository.deleteAccount(id);
+    }
+
+    // ============================================================
+    // RECEIVE PAYMENT
+    // ============================================================
+    async receivePayment(data: any) {
+        return accountRepository.receivePayment({
+            customerId: data.customerId,
+
+            cashAmount:
+                Number(data.cashAmount || 0),
+
+            onlinePayments:
+                data.onlinePayments || [],
+
+            cheques:
+                data.cheques || [],
+
+            notes:
+                data.notes || "",
+
+            bills:
+                data.bills || [],
+        });
     }
 }

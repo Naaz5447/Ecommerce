@@ -12,6 +12,16 @@ export class BillController {
             data,
         });
     }
+    async getBillsByCustomer(req: Request, res: Response) {
+        const data = await service.getBillsByCustomer(
+            String(req.params.customerId)
+        );
+
+        res.json({
+            success: true,
+            data,
+        });
+    }
 
     async getBill(req: Request, res: Response) {
         const data = await service.getBill(String(req.params.id));
@@ -38,6 +48,15 @@ export class BillController {
         });
     }
 
+    async cancelBill(req: Request, res: Response) {
+        const data = await service.cancelBill(String(req.params.id));
+
+        res.json({
+            success: true,
+            data,
+        });
+    }
+
     async updateBill(req: Request, res: Response) {
         const data = await service.updateBill(String(req.params.id), req.body);
 
@@ -47,12 +66,4 @@ export class BillController {
         });
     }
 
-    async deleteBill(req: Request, res: Response) {
-        await service.deleteBill(String(req.params.id));
-
-        res.json({
-            success: true,
-            message: "Bill cancelled successfully",
-        });
-    }
 }

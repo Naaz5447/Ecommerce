@@ -25,6 +25,31 @@ export class BillRepository {
         }));
     }
 
+    // MARK: get bills by cm
+
+    async getBillsByCustomer(customerId: string) {
+        return prisma.bill.findMany({
+            where: {
+                customerId,
+            },
+            include: {
+                customer: true,
+                employee: true,
+                items: true,
+                payments: true,
+                order: {
+                    select: {
+                        orderNumber: true,
+                    },
+                },
+            },
+            orderBy: {
+                billDateTime: "desc",
+            },
+        });
+    }
+
+
     // ============================================================
     //MARK: GET SINGLE BILL
     // ============================================================
@@ -239,6 +264,68 @@ export class BillRepository {
     //
     // Customer outstanding += 200
     // ============================================================
+
+    async cancelBill(id: string) {
+        return prisma.$transaction(async (tx) => {
+            const bill = await tx.bill.findUnique({
+                where: {
+                    id,
+                },
+            });
+
+            if (!bill) {
+                throw new Error("Bill not found");
+            }
+
+            if (bill.status === "CANCELLED") {
+                throw new Error("Bill is already cancelled");
+            }
+
+            const totalAmount = Number(bill.totalAmount);
+            const pendingAmount = Number(bill.pendingAmount);
+
+            // Reverse customer's outstanding balance
+            await tx.customer.update({
+                where: {
+                    id: bill.customerId,
+                },
+                data: {
+                    outstanding: {
+                        decrement: pendingAmount,
+                    },
+
+                    totalPurchase: {
+                        decrement: totalAmount,
+                    },
+
+                    totalPending: {
+                        decrement: pendingAmount,
+                    },
+                },
+            });
+
+            // Cancel bill
+            const cancelledBill = await tx.bill.update({
+                where: {
+                    id,
+                },
+                data: {
+                    status: "CANCELLED",
+                    cancelledAt: new Date(),
+                },
+                include: {
+                    customer: true,
+                    employee: true,
+                    items: true,
+                    payments: true,
+                },
+            });
+
+            return cancelledBill;
+        });
+    }
+
+
     async updateBill(id: string, data: any) {
         return prisma.$transaction(async (tx) => {
             // ----------------------------------------------------
@@ -412,105 +499,4 @@ export class BillRepository {
         });
     }
 
-    // ============================================================
-    // MARK:CANCEL BILL
-    //
-    // When a pending bill is cancelled:
-    //
-    // outstanding -= pendingAmount
-    // totalPurchase -= totalAmount
-    // totalPending -= pendingAmount
-    //
-    // We do NOT subtract paidAmount from totalReceived because
-    // this method does not refund payments.
-    // ============================================================
-    async deleteBill(id: string) {
-        return prisma.$transaction(async (tx) => {
-            // ----------------------------------------------------
-            // 1. Find bill
-            // ----------------------------------------------------
-            const bill = await tx.bill.findUnique({
-                where: {
-                    id,
-                },
-                include: {
-                    customer: true,
-                },
-            });
-
-            if (!bill) {
-                throw new Error("Bill not found");
-            }
-
-            // ----------------------------------------------------
-            // 2. Prevent duplicate cancellation
-            // ----------------------------------------------------
-            if (bill.status === "CANCELLED") {
-                throw new Error(
-                    "Bill is already cancelled"
-                );
-            }
-
-            const totalAmount =
-                Number(bill.totalAmount);
-
-            const pendingAmount =
-                Number(bill.pendingAmount);
-
-            // ----------------------------------------------------
-            // 3. Reverse customer balance
-            //
-            // If:
-            //
-            // total = 7040
-            // paid = 0
-            // pending = 7040
-            //
-            // Then:
-            //
-            // outstanding -= 7040
-            // totalPurchase -= 7040
-            // totalPending -= 7040
-            // ----------------------------------------------------
-            await tx.customer.update({
-                where: {
-                    id: bill.customerId,
-                },
-                data: {
-                    outstanding: {
-                        decrement: pendingAmount,
-                    },
-
-                    totalPurchase: {
-                        decrement: totalAmount,
-                    },
-
-                    totalPending: {
-                        decrement: pendingAmount,
-                    },
-                },
-            });
-
-            // ----------------------------------------------------
-            // 4. Cancel bill
-            // ----------------------------------------------------
-            const cancelledBill = await tx.bill.update({
-                where: {
-                    id,
-                },
-                data: {
-                    status: "CANCELLED",
-                    cancelledAt: new Date(),
-                },
-                include: {
-                    customer: true,
-                    employee: true,
-                    items: true,
-                    payments: true,
-                },
-            });
-
-            return cancelledBill;
-        });
-    }
 }
