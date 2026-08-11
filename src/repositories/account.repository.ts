@@ -42,7 +42,12 @@ export class AccountRepository {
                 customer: true,
                 employee: true,
                 items: true,
-                payments: true,
+
+                billAllocations: {
+                    include: {
+                        account: true,
+                    },
+                },
 
                 order: {
                     select: {
@@ -355,6 +360,25 @@ export class AccountRepository {
                         amountApplied,
                     },
                 });
+                await tx.paymentHistory.create({
+                    data: {
+                        billId: allocation.billId,
+                        accountId: account.id,
+                        customerId: data.customerId,
+
+                        paymentDate: new Date(),
+
+                        amountApplied,
+
+                        cashAmount,
+
+                        onlinePayments: data.onlinePayments,
+
+                        cheques: data.cheques,
+
+                        notes: data.notes,
+                    },
+                });
             }
 
             // ----------------------------------------------------
@@ -377,6 +401,7 @@ export class AccountRepository {
                     totalReceived: {
                         increment: totalReceivedAmount,
                     },
+                    lastPaymentDate: new Date(),
                 },
             });
 

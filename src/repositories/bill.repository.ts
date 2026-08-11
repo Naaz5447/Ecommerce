@@ -26,7 +26,6 @@ export class BillRepository {
     }
 
     // MARK: get bills by cm
-
     async getBillsByCustomer(customerId: string) {
         return prisma.bill.findMany({
             where: {
@@ -48,7 +47,6 @@ export class BillRepository {
             },
         });
     }
-
 
     // ============================================================
     //MARK: GET SINGLE BILL
