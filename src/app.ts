@@ -24,6 +24,7 @@ import billRoutes from "./routes/bill.routes";
 import paymentRoutes from "./routes/payment.routes";
 import areaRoutes from "./routes/area.routes";
 import empDesignationRoutes from "./routes/employeeDesignation.routes";
+import adminAuthRoutes from "./routes/admin-auth.routes";
 
 
 import { notFoundHandler } from "./common/handlers/not-found.handler";
@@ -47,6 +48,7 @@ app.use(morgan("dev"));
 app.use("/health", healthRoutes);
 app.use("/api/v1/health", healthRoutes);
 app.use("/auth", authRoutes);
+app.use("/admin/auth", adminAuthRoutes);
 app.use("/", catalogRoutes);
 app.use("/admin/categories", adminCategoryRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));

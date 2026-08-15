@@ -40,7 +40,7 @@ const ensureActiveUser = (status: UserStatus) => {
   }
 };
 
-const issueTokens = (
+export const issueTokens = (
   user: { id: string },
   shopId: string,
   role: ShopUserRole
@@ -102,6 +102,57 @@ export const requestOtp = async (
     phone,
   };
 };
+
+export const requestAdminOtp = async (
+  shopId: string,
+  phone: string
+) => {
+  const shop = await findActiveShopByShopId(shopId);
+
+  const user = await findUserByPhone(phone);
+
+  if (!user) {
+    throw new AppError(
+      "Admin account not found",
+      403
+    );
+  }
+
+  ensureActiveUser(user.status);
+
+  const membership = await findUserShopMembership(
+    user.id,
+    shop.id
+  );
+
+  if (!membership || membership.role !== ShopUserRole.ADMIN) {
+    throw new AppError(
+      "You do not have admin access to this shop",
+      403
+    );
+  }
+
+  const otp = "111111";
+
+  const otpHash = await bcrypt.hash(otp, 10);
+
+  await upsertOtp(
+    shop.id,
+    phone,
+    otpHash,
+    getOtpExpiry()
+  );
+
+  if (env.NODE_ENV !== "production") {
+    console.log(`Admin OTP for ${phone}: ${otp}`);
+  }
+
+  return {
+    shopId,
+    phone,
+  };
+};
+
 
 /**
  * VERIFY OTP
@@ -228,6 +279,84 @@ export const verifyOtp = async (
 
     shopId,
     role: membership.role,
+  };
+};
+export const verifyAdminOtp = async (
+  shopId: string,
+  phone: string,
+  otp: string
+) => {
+  const shop = await findActiveShopByShopId(shopId);
+
+  const otpRecord = await findOtpByPhone(shop.id, phone);
+
+  if (!otpRecord) {
+    throw new AppError(
+      "OTP not found. Please request a new OTP.",
+      404
+    );
+  }
+
+  if (otpRecord.expiresAt <= new Date()) {
+    await deleteOtpByPhone(shop.id, phone);
+
+    throw new AppError(
+      "OTP expired. Please request a new OTP.",
+      400
+    );
+  }
+
+  const otpMatches = await bcrypt.compare(
+    otp,
+    otpRecord.otp
+  );
+
+  if (!otpMatches) {
+    throw new AppError("Invalid OTP", 400);
+  }
+
+  const user = await findUserByPhone(phone);
+
+  if (!user) {
+    throw new AppError(
+      "Admin account not found",
+      403
+    );
+  }
+
+  ensureActiveUser(user.status);
+
+  const membership = await findUserShopMembership(
+    user.id,
+    shop.id
+  );
+
+  if (!membership || membership.role !== ShopUserRole.ADMIN) {
+    throw new AppError(
+      "You do not have admin access to this shop",
+      403
+    );
+  }
+
+  await deleteOtpByPhone(shop.id, phone);
+
+  return {
+    profileCompleted: true,
+
+    ...issueTokens(
+      user,
+      shopId,
+      ShopUserRole.ADMIN
+    ),
+
+    user: toPublicUser(
+      user,
+      shopId,
+      ShopUserRole.ADMIN
+    ),
+
+    shopId,
+    role: ShopUserRole.ADMIN,
   };
 };
 
@@ -361,25 +490,17 @@ export const refreshAuthToken = async (
       refreshToken
     );
 
-    if (payload.type !== "refresh") {
+    if (
+      payload.type !== "refresh" ||
+      !payload.userId ||
+      !payload.shopId
+    ) {
       throw new AppError(
         "Invalid refresh token",
         401
       );
     }
 
-    if (!payload.userId || !payload.shopId) {
-      throw new AppError(
-        "Invalid refresh token",
-        401
-      );
-    }
-
-    // payload.shopId is the PUBLIC shopId:
-    // "MAHADEV001"
-    //
-    // Convert it to the internal Shop UUID
-    // for database queries.
     const shop = await findActiveShopByShopId(
       payload.shopId
     );
@@ -438,7 +559,6 @@ export const refreshAuthToken = async (
     );
   }
 };
-
 
 /**
  * LOGOUT

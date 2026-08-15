@@ -8,11 +8,18 @@ import {
     updateProductSchema,
 } from "../validations/admin-product.validation";
 
+import { authenticate } from "../middleware/auth.middleware";
+import { requireRole } from "../middleware/role.middleware";
+import { ShopUserRole } from "@prisma/client";
 
 
 
 const router = Router();
 const controller = new AdminProductController();
+router.use(
+    authenticate,
+    requireRole(ShopUserRole.ADMIN)
+);
 
 router.get("/", controller.getProducts);
 router.get("/:id", controller.getProduct);

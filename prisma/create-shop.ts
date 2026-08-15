@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, ShopUserRole, UserStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -11,8 +11,25 @@ async function main() {
         },
     });
 
-    console.log("Shop created:");
-    console.log(shop);
+    const admin = await prisma.user.create({
+        data: {
+            name: "Mahadev Admin",
+            phone: "9004353155", // CHANGE TO REAL ADMIN NUMBER
+            status: UserStatus.ACTIVE,
+        },
+    });
+
+    const membership = await prisma.shopUser.create({
+        data: {
+            shopId: shop.id,
+            userId: admin.id,
+            role: ShopUserRole.ADMIN,
+        },
+    });
+
+    console.log("Shop:", shop);
+    console.log("Admin:", admin);
+    console.log("Membership:", membership);
 }
 
 main()

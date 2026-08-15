@@ -17,6 +17,21 @@ export const requestOtpController = async (
     result
   );
 };
+export const requestAdminOtpController = async (
+  req: Request,
+  res: Response
+) => {
+  const result = await authService.requestAdminOtp(
+    req.body.shopId,
+    req.body.phone
+  );
+
+  return ApiResponse.success(
+    res,
+    "Admin OTP sent successfully",
+    result
+  );
+};
 
 export const verifyOtpController = async (
   req: Request,
@@ -31,6 +46,22 @@ export const verifyOtpController = async (
   return ApiResponse.success(
     res,
     "OTP verified successfully",
+    result
+  );
+};
+export const verifyAdminOtpController = async (
+  req: Request,
+  res: Response
+) => {
+  const result = await authService.verifyAdminOtp(
+    req.body.shopId,
+    req.body.phone,
+    req.body.otp
+  );
+
+  return ApiResponse.success(
+    res,
+    "Admin OTP verified successfully",
     result
   );
 };

@@ -7,6 +7,7 @@ import {
 import { AppError } from "../utils/app-error";
 import { verifyAccessToken } from "../utils/jwt";
 import { findPublicUserById } from "../repositories/user.repository";
+import { findActiveShopByShopId } from "../repositories/shop.repository";
 
 export const authenticate = async (
   req: Request,
@@ -14,8 +15,7 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   try {
-    const authHeader =
-      req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
     if (!authHeader?.startsWith("Bearer ")) {
       throw new AppError(
@@ -25,7 +25,6 @@ export const authenticate = async (
     }
 
     const token = authHeader.substring(7);
-
     const payload = verifyAccessToken(token);
 
     if (payload.type !== "access") {
@@ -42,9 +41,13 @@ export const authenticate = async (
       );
     }
 
+    const shop = await findActiveShopByShopId(
+      payload.shopId
+    );
+
     const user = await findPublicUserById(
       payload.userId,
-      payload.shopId
+      shop.id
     );
 
     if (!user || user.status !== "ACTIVE") {
