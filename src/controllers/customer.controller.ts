@@ -5,17 +5,23 @@ const customerService = new CustomerService();
 
 export class CustomerController {
   async getCustomers(req: Request, res: Response) {
-    const data = await customerService.getCustomers();
+    const shopId = req.user!.shopId;
 
-    res.json({
+    const data = await customerService.getCustomers(shopId);
+
+    return res.json({
       success: true,
       data,
     });
   }
 
   async getCustomer(req: Request, res: Response) {
+    const shopId = req.user!.shopId;
+    const id = String(req.params.id);
+
     const customer = await customerService.getCustomer(
-      String(req.params.id)
+      id,
+      shopId
     );
 
     if (!customer) {
@@ -25,16 +31,21 @@ export class CustomerController {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       data: customer,
     });
   }
 
   async createCustomer(req: Request, res: Response) {
-    const customer = await customerService.createCustomer(req.body);
+    const shopId = req.user!.shopId;
 
-    res.status(201).json({
+    const customer = await customerService.createCustomer({
+      ...req.body,
+      shopId,
+    });
+
+    return res.status(201).json({
       success: true,
       message: "Customer created successfully",
       data: customer,
@@ -42,12 +53,16 @@ export class CustomerController {
   }
 
   async updateCustomer(req: Request, res: Response) {
+    const shopId = req.user!.shopId;
+    const id = String(req.params.id);
+
     const customer = await customerService.updateCustomer(
-      String(req.params.id),
+      id,
+      shopId,
       req.body
     );
 
-    res.json({
+    return res.json({
       success: true,
       message: "Customer updated successfully",
       data: customer,
@@ -55,9 +70,15 @@ export class CustomerController {
   }
 
   async deleteCustomer(req: Request, res: Response) {
-    await customerService.deleteCustomer(String(req.params.id));
+    const shopId = req.user!.shopId;
+    const id = String(req.params.id);
 
-    res.json({
+    await customerService.deleteCustomer(
+      id,
+      shopId
+    );
+
+    return res.json({
       success: true,
       message: "Customer deleted successfully",
     });

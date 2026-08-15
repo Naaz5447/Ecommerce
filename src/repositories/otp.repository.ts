@@ -1,9 +1,20 @@
 import { prisma } from "../config/prisma";
 
-export const upsertOtp = (phone: string, otpHash: string, expiresAt: Date) => {
+export const upsertOtp = (
+  shopId: string,
+  phone: string,
+  otpHash: string,
+  expiresAt: Date
+) => {
   return prisma.oTP.upsert({
-    where: { phone },
+    where: {
+      shopId_phone: {
+        shopId,
+        phone,
+      },
+    },
     create: {
+      shopId,
       phone,
       otp: otpHash,
       expiresAt,
@@ -16,23 +27,42 @@ export const upsertOtp = (phone: string, otpHash: string, expiresAt: Date) => {
   });
 };
 
-export const findOtpByPhone = (phone: string) => {
+export const findOtpByPhone = (shopId: string, phone: string) => {
   return prisma.oTP.findUnique({
-    where: { phone },
+    where: {
+      shopId_phone: {
+        shopId,
+        phone,
+      },
+    },
   });
 };
 
-export const updateOtpHash = (phone: string, otpHash: string) => {
+export const updateOtpHash = (
+  shopId: string,
+  phone: string,
+  otpHash: string
+) => {
   return prisma.oTP.update({
-    where: { phone },
+    where: {
+      shopId_phone: {
+        shopId,
+        phone,
+      },
+    },
     data: {
       otp: otpHash,
     },
   });
 };
 
-export const deleteOtpByPhone = (phone: string) => {
+export const deleteOtpByPhone = (shopId: string, phone: string) => {
   return prisma.oTP.delete({
-    where: { phone },
+    where: {
+      shopId_phone: {
+        shopId,
+        phone,
+      },
+    },
   });
 };

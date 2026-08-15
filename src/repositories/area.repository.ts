@@ -1,75 +1,69 @@
-import { PrismaClient } from "@prisma/client";
-
-
-const prisma = new PrismaClient();
-
-
+import { prisma } from "../config/prisma";
 
 export class AreaRepository {
-
-
-    async create(data: { name: string }) {
-
+    async create(shopId: string, name: string) {
         return prisma.area.create({
-            data
+            data: {
+                shopId,
+                name,
+            },
         });
-
     }
 
-
-
-    async findAll() {
-
+    async findAll(shopId: string) {
         return prisma.area.findMany({
-            orderBy: {
-                name: "asc"
-            }
-        });
-
-    }
-
-
-
-    async findById(id: string) {
-
-        return prisma.area.findUnique({
             where: {
-                id
-            }
+                shopId,
+            },
+            orderBy: {
+                name: "asc",
+            },
         });
-
     }
 
+    async findById(id: string, shopId: string) {
+        return prisma.area.findFirst({
+            where: {
+                id,
+                shopId,
+            },
+        });
+    }
 
+    async findByName(shopId: string, name: string) {
+        return prisma.area.findFirst({
+            where: {
+                shopId,
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            },
+        });
+    }
 
     async update(
         id: string,
-        data: { name: string }
+        shopId: string,
+        name: string
     ) {
-
-        return prisma.area.update({
-
+        return prisma.area.updateMany({
             where: {
-                id
+                id,
+                shopId,
             },
-
-            data
-
+            data: {
+                name,
+            },
         });
-
     }
 
-
-
-    async delete(id: string) {
-
-        return prisma.area.delete({
+    async delete(id: string, shopId: string) {
+        return prisma.area.deleteMany({
             where: {
-                id
-            }
+                id,
+                shopId,
+            },
         });
-
     }
-
-
 }

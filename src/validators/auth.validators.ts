@@ -1,13 +1,22 @@
 import { body } from "express-validator";
 
+const shopIdValidator = body("shopId")
+  .trim()
+  .notEmpty()
+  .withMessage("Shop ID is required");
+
 const phoneValidator = body("phone")
   .trim()
   .matches(/^[6-9]\d{9}$/)
   .withMessage("Invalid phone number");
 
-export const requestOtpValidator = [phoneValidator];
+export const requestOtpValidator = [
+  shopIdValidator,
+  phoneValidator,
+];
 
 export const verifyOtpValidator = [
+  shopIdValidator,
   phoneValidator,
   body("otp")
     .trim()
@@ -16,6 +25,7 @@ export const verifyOtpValidator = [
 ];
 
 export const completeProfileValidator = [
+  shopIdValidator,
   phoneValidator,
   body("name")
     .trim()

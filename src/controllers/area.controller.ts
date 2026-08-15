@@ -1,19 +1,35 @@
-import { Request, Response } from "express";
+import {
+    Request,
+    Response,
+} from "express";
+
 import { AreaService } from "../services/area.service";
 
-
-const areaService = new AreaService();
+const areaService =
+    new AreaService();
 
 export class AreaController {
-
-    static async getAreas(req: Request, res: Response) {
+    static async getAreas(
+        req: Request,
+        res: Response
+    ) {
         try {
-            const data = await areaService.getAreas();
-            res.json({ success: true, data, });
+            const shopId =
+                req.user!.shopId;
+
+            const data =
+                await areaService.getAreas(
+                    shopId
+                );
+
+            return res.json({
+                success: true,
+                data,
+            });
         } catch (error: any) {
-            res.status(500).json({
+            return res.status(500).json({
                 success: false,
-                message: error.message
+                message: error.message,
             });
         }
     }
@@ -23,63 +39,86 @@ export class AreaController {
         res: Response
     ) {
         try {
+            const shopId =
+                req.user!.shopId;
+
+            const id =
+                String(req.params.id);
+
             const area =
                 await areaService.getArea(
-                    String(req.params.id)
+                    id,
+                    shopId
                 );
-            if (!area) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Area not found"
-                });
-            }
-            res.json({
+
+            return res.json({
                 success: true,
-                data: area
+                data: area,
             });
         } catch (error: any) {
-            res.status(500).json({
+            return res.status(404).json({
                 success: false,
-                message: error.message
+                message: error.message,
             });
         }
     }
 
-    static async createArea(req: Request, res: Response) {
+    static async createArea(
+        req: Request,
+        res: Response
+    ) {
         try {
+            const shopId =
+                req.user!.shopId;
+
             const area =
                 await areaService.createArea(
+                    shopId,
                     req.body.name
                 );
-            res.status(201).json({
+
+            return res.status(201).json({
                 success: true,
-                message: "Area created successfully",
-                data: area
+                message:
+                    "Area created successfully",
+                data: area,
             });
         } catch (error: any) {
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
-                message: error.message
+                message: error.message,
             });
         }
     }
 
-    static async updateArea(req: Request, res: Response) {
+    static async updateArea(
+        req: Request,
+        res: Response
+    ) {
         try {
+            const shopId =
+                req.user!.shopId;
+
+            const id =
+                String(req.params.id);
+
             const area =
                 await areaService.updateArea(
-                    String(req.params.id),
+                    id,
+                    shopId,
                     req.body.name
                 );
-            res.json({
+
+            return res.json({
                 success: true,
-                message: "Area updated successfully",
-                data: area
+                message:
+                    "Area updated successfully",
+                data: area,
             });
         } catch (error: any) {
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
-                message: error.message
+                message: error.message,
             });
         }
     }
@@ -89,17 +128,26 @@ export class AreaController {
         res: Response
     ) {
         try {
+            const shopId =
+                req.user!.shopId;
+
+            const id =
+                String(req.params.id);
+
             await areaService.deleteArea(
-                String(req.params.id)
+                id,
+                shopId
             );
-            res.json({
+
+            return res.json({
                 success: true,
-                message: "Area deleted successfully"
+                message:
+                    "Area deleted successfully",
             });
         } catch (error: any) {
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
-                message: error.message
+                message: error.message,
             });
         }
     }

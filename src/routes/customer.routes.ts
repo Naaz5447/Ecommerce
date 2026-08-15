@@ -1,17 +1,61 @@
 import { Router } from "express";
 import { CustomerController } from "../controllers/customer.controller";
+import { authenticate } from "../middleware/auth.middleware";
+import { asyncHandler } from "../common/handlers/async.handler";
+import { validateRequest } from "../middleware/validate-request";
+import {
+  createCustomerValidator,
+  customerIdValidator,
+  updateCustomerValidator,
+} from "../validators/customer.validators";
 
 const router = Router();
-const controller = new CustomerController();
 
-router.get("/", controller.getCustomers.bind(controller));
+const customerController = new CustomerController();
 
-router.get("/:id", controller.getCustomer.bind(controller));
+router.use(authenticate);
 
-router.post("/", controller.createCustomer.bind(controller));
+router.get(
+  "/",
+  asyncHandler(
+    customerController.getCustomers.bind(customerController)
+  )
+);
 
-router.put("/:id", controller.updateCustomer.bind(controller));
+router.get(
+  "/:id",
+  customerIdValidator,
+  validateRequest,
+  asyncHandler(
+    customerController.getCustomer.bind(customerController)
+  )
+);
 
-router.delete("/:id", controller.deleteCustomer.bind(controller));
+router.post(
+  "/",
+  createCustomerValidator,
+  validateRequest,
+  asyncHandler(
+    customerController.createCustomer.bind(customerController)
+  )
+);
+
+router.put(
+  "/:id",
+  updateCustomerValidator,
+  validateRequest,
+  asyncHandler(
+    customerController.updateCustomer.bind(customerController)
+  )
+);
+
+router.delete(
+  "/:id",
+  customerIdValidator,
+  validateRequest,
+  asyncHandler(
+    customerController.deleteCustomer.bind(customerController)
+  )
+);
 
 export default router;
