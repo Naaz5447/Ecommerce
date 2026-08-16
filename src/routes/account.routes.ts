@@ -1,59 +1,73 @@
 import { Router } from "express";
 import { AccountController } from "../controllers/account.controller";
+import { authenticate } from "../middleware/auth.middleware";
+import { requireRole } from "../middleware/role.middleware";
+import { asyncHandler } from "../common/handlers/async.handler";
+import { ShopUserRole } from "@prisma/client";
 
 const router = Router();
-
 const controller = new AccountController();
 
-// ============================================================
-// GET
-// ============================================================
+router.use(authenticate);
 
+// ADMIN + CUSTOMER
 router.get(
     "/",
-    controller.getAccounts.bind(controller)
+    asyncHandler(
+        controller.getAccounts.bind(controller)
+    )
 );
 
+// ADMIN + CUSTOMER
 router.get(
     "/customer/:customerId/outstanding-bills",
-    controller.getOutstandingBills.bind(controller)
+    asyncHandler(
+        controller.getOutstandingBills.bind(controller)
+    )
 );
 
+// ADMIN + CUSTOMER
 router.get(
     "/:id",
-    controller.getAccount.bind(controller)
+    asyncHandler(
+        controller.getAccount.bind(controller)
+    )
 );
 
-// ============================================================
-// POST
-// ============================================================
-
+// ADMIN ONLY
 router.post(
     "/",
-    controller.createAccount.bind(controller)
+    requireRole(ShopUserRole.ADMIN),
+    asyncHandler(
+        controller.createAccount.bind(controller)
+    )
 );
 
-router.post(
-    "/receive-payment",
-    controller.receivePayment.bind(controller)
-);
-
-// ============================================================
-// PUT
-// ============================================================
-
+// ADMIN ONLY
 router.put(
     "/:id",
-    controller.updateAccount.bind(controller)
+    requireRole(ShopUserRole.ADMIN),
+    asyncHandler(
+        controller.updateAccount.bind(controller)
+    )
 );
 
-// ============================================================
-// DELETE
-// ============================================================
-
+// ADMIN ONLY
 router.delete(
     "/:id",
-    controller.deleteAccount.bind(controller)
+    requireRole(ShopUserRole.ADMIN),
+    asyncHandler(
+        controller.deleteAccount.bind(controller)
+    )
+);
+
+// ADMIN ONLY
+router.post(
+    "/receive-payment",
+    requireRole(ShopUserRole.ADMIN),
+    asyncHandler(
+        controller.receivePayment.bind(controller)
+    )
 );
 
 export default router;

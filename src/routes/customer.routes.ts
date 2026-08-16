@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { CustomerController } from "../controllers/customer.controller";
 import { authenticate } from "../middleware/auth.middleware";
+import { requireRole } from "../middleware/role.middleware";
 import { asyncHandler } from "../common/handlers/async.handler";
 import { validateRequest } from "../middleware/validate-request";
 import {
@@ -8,6 +9,7 @@ import {
   customerIdValidator,
   updateCustomerValidator,
 } from "../validators/customer.validators";
+import { ShopUserRole } from "@prisma/client";
 
 const router = Router();
 
@@ -15,13 +17,16 @@ const customerController = new CustomerController();
 
 router.use(authenticate);
 
+// ADMIN: see all customers
 router.get(
   "/",
+  requireRole(ShopUserRole.ADMIN),
   asyncHandler(
     customerController.getCustomers.bind(customerController)
   )
 );
 
+// ADMIN + CUSTOMER: get customer
 router.get(
   "/:id",
   customerIdValidator,
@@ -31,6 +36,7 @@ router.get(
   )
 );
 
+// ADMIN + CUSTOMER: create customer/address
 router.post(
   "/",
   createCustomerValidator,
@@ -40,6 +46,7 @@ router.post(
   )
 );
 
+// ADMIN + CUSTOMER: update own customer/address
 router.put(
   "/:id",
   updateCustomerValidator,
@@ -49,8 +56,10 @@ router.put(
   )
 );
 
+// ADMIN only
 router.delete(
   "/:id",
+  requireRole(ShopUserRole.ADMIN),
   customerIdValidator,
   validateRequest,
   asyncHandler(

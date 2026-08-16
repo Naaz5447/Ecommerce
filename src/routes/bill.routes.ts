@@ -1,16 +1,65 @@
 import { Router } from "express";
 import { BillController } from "../controllers/bill.controller";
+import { authenticate } from "../middleware/auth.middleware";
+import { requireRole } from "../middleware/role.middleware";
+import { asyncHandler } from "../common/handlers/async.handler";
+import { ShopUserRole } from "@prisma/client";
 
 const router = Router();
+
+router.use(authenticate);
+
 const controller = new BillController();
 
-router.get("/", controller.getBills.bind(controller));
-router.get("/customer/:customerId", controller.getBillsByCustomer.bind(controller));
+// ADMIN + CUSTOMER
+router.get(
+    "/",
+    asyncHandler(
+        controller.getBills.bind(controller)
+    )
+);
 
-router.get("/:id", controller.getBill.bind(controller));
+// ADMIN + CUSTOMER
+router.get(
+    "/customer/:customerId",
+    asyncHandler(
+        controller.getBillsByCustomer.bind(controller)
+    )
+);
 
-router.post("/", controller.createBill.bind(controller));
+// ADMIN + CUSTOMER
+router.get(
+    "/:id",
+    asyncHandler(
+        controller.getBill.bind(controller)
+    )
+);
 
-router.put("/:id/cancel", controller.cancelBill.bind(controller));
-router.put("/:id", controller.updateBill.bind(controller));
+// ADMIN ONLY
+router.post(
+    "/",
+    requireRole(ShopUserRole.ADMIN),
+    asyncHandler(
+        controller.createBill.bind(controller)
+    )
+);
+
+// ADMIN ONLY
+router.put(
+    "/:id/cancel",
+    requireRole(ShopUserRole.ADMIN),
+    asyncHandler(
+        controller.cancelBill.bind(controller)
+    )
+);
+
+// ADMIN ONLY
+router.put(
+    "/:id",
+    requireRole(ShopUserRole.ADMIN),
+    asyncHandler(
+        controller.updateBill.bind(controller)
+    )
+);
+
 export default router;

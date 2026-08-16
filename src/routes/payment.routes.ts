@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { PaymentController } from "../controllers/payment.controller";
+import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
+router.use(authenticate);
 const controller = new PaymentController();
 
 router.get("/", controller.getPayments.bind(controller));

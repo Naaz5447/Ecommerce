@@ -4,27 +4,43 @@ import { BillService } from "../services/bill.service";
 const service = new BillService();
 
 export class BillController {
-    async getBills(req: Request, res: Response) {
-        const data = await service.getBills();
 
-        res.json({
-            success: true,
-            data,
-        });
-    }
-    async getBillsByCustomer(req: Request, res: Response) {
-        const data = await service.getBillsByCustomer(
-            String(req.params.customerId)
+    async getBills(req: Request, res: Response) {
+        const data = await service.getBills(
+            req.user!
         );
 
+        return res.json({
+            success: true,
+            data,
+        });
+    }
+
+    async getBillsByCustomer(
+        req: Request,
+        res: Response
+    ) {
+        const data =
+            await service.getBillsByCustomer(
+                String(req.params.customerId),
+                req.user!
+            );
+
         res.json({
             success: true,
             data,
         });
     }
 
-    async getBill(req: Request, res: Response) {
-        const data = await service.getBill(String(req.params.id));
+    async getBill(
+        req: Request,
+        res: Response
+    ) {
+        const data =
+            await service.getBill(
+                String(req.params.id),
+                req.user!
+            );
 
         if (!data) {
             return res.status(404).json({
@@ -33,37 +49,56 @@ export class BillController {
             });
         }
 
-        res.json({
+        return res.json({
             success: true,
             data,
         });
     }
 
-    async createBill(req: Request, res: Response) {
-        const data = await service.createBill(req.body);
+    async createBill(
+        req: Request,
+        res: Response
+    ) {
+        const data =
+            await service.createBill(
+                req.body,
+                req.user!
+            );
 
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
             data,
         });
     }
 
-    async cancelBill(req: Request, res: Response) {
-        const data = await service.cancelBill(String(req.params.id));
+    async cancelBill(
+        req: Request,
+        res: Response
+    ) {
+        const data =
+            await service.cancelBill(
+                String(req.params.id)
+            );
 
-        res.json({
+        return res.json({
             success: true,
             data,
         });
     }
 
-    async updateBill(req: Request, res: Response) {
-        const data = await service.updateBill(String(req.params.id), req.body);
+    async updateBill(
+        req: Request,
+        res: Response
+    ) {
+        const data =
+            await service.updateBill(
+                String(req.params.id),
+                req.body
+            );
 
-        res.json({
+        return res.json({
             success: true,
             data,
         });
     }
-
 }

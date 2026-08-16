@@ -1,13 +1,20 @@
 import { Request, Response } from "express";
 import { CustomerService } from "../services/customer.service";
+import { ShopUserRole } from "@prisma/client";
 
 const customerService = new CustomerService();
 
 export class CustomerController {
-  async getCustomers(req: Request, res: Response) {
-    const shopId = req.user!.shopId;
 
-    const data = await customerService.getCustomers(shopId);
+
+  async getCustomers(req: Request, res: Response) {
+    const user = req.user!;
+
+    const data = await customerService.getCustomers(
+      user.shopId,
+      user.id,
+      user.role
+    );
 
     return res.json({
       success: true,
@@ -16,12 +23,14 @@ export class CustomerController {
   }
 
   async getCustomer(req: Request, res: Response) {
-    const shopId = req.user!.shopId;
+    const user = req.user!;
     const id = String(req.params.id);
 
     const customer = await customerService.getCustomer(
       id,
-      shopId
+      user.shopId,
+      user.id,
+      user.role
     );
 
     if (!customer) {
@@ -40,10 +49,18 @@ export class CustomerController {
   async createCustomer(req: Request, res: Response) {
     const shopId = req.user!.shopId;
 
-    const customer = await customerService.createCustomer({
+    const data = {
       ...req.body,
       shopId,
-    });
+
+      // CUSTOMER creates/updates their own customer profile
+      ...(req.user!.role === ShopUserRole.CUSTOMER && {
+        userId: req.user!.id,
+      }),
+    };
+
+    const customer =
+      await customerService.createCustomer(data);
 
     return res.status(201).json({
       success: true,
@@ -56,11 +73,13 @@ export class CustomerController {
     const shopId = req.user!.shopId;
     const id = String(req.params.id);
 
-    const customer = await customerService.updateCustomer(
-      id,
-      shopId,
-      req.body
-    );
+    const customer =
+      await customerService.updateCustomer(
+        id,
+        shopId,
+        req.body,
+        req.user!
+      );
 
     return res.json({
       success: true,

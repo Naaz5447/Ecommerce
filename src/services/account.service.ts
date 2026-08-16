@@ -1,4 +1,5 @@
 import { AccountRepository } from "../repositories/account.repository";
+import { PublicUser } from "../repositories/user.repository";
 
 const accountRepository = new AccountRepository();
 
@@ -6,24 +7,30 @@ export class AccountService {
     // ============================================================
     // GET ALL
     // ============================================================
-    async getAccounts() {
-        return accountRepository.getAccounts();
+
+    async getAccounts(user: PublicUser) {
+        return accountRepository.getAccounts(user);
     }
 
-    // ============================================================
-    // GET OUTSTANDING BILLS
-    // ============================================================
-    async getOutstandingBills(customerId: string) {
-        return accountRepository.getOutstandingBills(customerId);
+    async getOutstandingBills(
+        customerId: string,
+        user: PublicUser
+    ) {
+        return accountRepository.getOutstandingBills(
+            customerId,
+            user
+        );
     }
 
-    // ============================================================
-    // GET SINGLE ACCOUNT
-    // ============================================================
-    async getAccount(id: string) {
-        return accountRepository.getAccountById(id);
+    async getAccount(
+        id: string,
+        user: PublicUser
+    ) {
+        return accountRepository.getAccountById(
+            id,
+            user
+        );
     }
-
     // ============================================================
     // CREATE ACCOUNT
     // ============================================================

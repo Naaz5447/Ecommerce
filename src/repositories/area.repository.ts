@@ -1,9 +1,11 @@
 import { prisma } from "../config/prisma";
+import { randomUUID } from "crypto";
 
 export class AreaRepository {
     async create(shopId: string, name: string) {
         return prisma.area.create({
             data: {
+                id: randomUUID(),
                 shopId,
                 name,
             },

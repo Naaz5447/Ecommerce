@@ -1,47 +1,90 @@
 import { prisma } from "../config/prisma";
+import { ShopUserRole } from "@prisma/client";
+import { PublicUser } from "./user.repository";
+import { getCustomerForUser, } from "../utils/customer-access";
 
 export class BillRepository {
     // ============================================================
     // MARK:GET ALL BILLS
     // ============================================================
-    async getBills() {
-        const bills = await prisma.bill.findMany({
-            include: {
-                customer: true,
-                employee: true,
-                items: true,
-                payments: true,
-                order: {
-                    select: {
-                        orderNumber: true,
+    async getBills(user: PublicUser) {
+        const where: any = {};
+
+        if (user.role === ShopUserRole.CUSTOMER) {
+            const customer =
+                await getCustomerForUser(user);
+
+            where.customerId =
+                customer.id;
+        }
+
+        const bills =
+            await prisma.bill.findMany({
+                where,
+
+                include: {
+                    customer: true,
+                    employee: true,
+                    items: true,
+                    payments: true,
+
+                    order: {
+                        select: {
+                            orderNumber: true,
+                        },
                     },
                 },
-            },
-        });
 
-        return bills.map(({ order, ...bill }) => ({
-            ...bill,
-            orderNumber: order.orderNumber,
-        }));
+                orderBy: {
+                    billDateTime: "desc",
+                },
+            });
+
+        return bills.map(
+            ({ order, ...bill }) => ({
+                ...bill,
+                orderNumber:
+                    order.orderNumber,
+            })
+        );
     }
 
     // MARK: get bills by cm
-    async getBillsByCustomer(customerId: string) {
+    async getBillsByCustomer(
+        customerId: string,
+        user: PublicUser
+    ) {
+        if (
+            user.role === ShopUserRole.CUSTOMER
+        ) {
+            const customer =
+                await getCustomerForUser(user);
+
+            if (customer.id !== customerId) {
+                throw new Error(
+                    "You do not have access to this customer's bills"
+                );
+            }
+        }
+
         return prisma.bill.findMany({
             where: {
                 customerId,
             },
+
             include: {
                 customer: true,
                 employee: true,
                 items: true,
                 payments: true,
+
                 order: {
                     select: {
                         orderNumber: true,
                     },
                 },
             },
+
             orderBy: {
                 billDateTime: "desc",
             },
@@ -51,47 +94,76 @@ export class BillRepository {
     // ============================================================
     //MARK: GET SINGLE BILL
     // ============================================================
-    async getBill(id: string) {
-        const bill = await prisma.bill.findUnique({
-            where: {
-                id,
-            },
-            include: {
-                customer: true,
-                employee: true,
-                items: true,
-                payments: true,
-                order: {
-                    select: {
-                        orderNumber: true,
+    async getBill(
+        id: string,
+        user: PublicUser
+    ) {
+        const where: any = {
+            id,
+        };
+
+        if (
+            user.role === ShopUserRole.CUSTOMER
+        ) {
+            const customer =
+                await getCustomerForUser(user);
+
+            where.customerId =
+                customer.id;
+        }
+
+        const bill =
+            await prisma.bill.findFirst({
+                where,
+
+                include: {
+                    customer: true,
+                    employee: true,
+                    items: true,
+                    payments: true,
+
+                    order: {
+                        select: {
+                            orderNumber: true,
+                        },
                     },
                 },
-            },
-        });
+            });
 
         if (!bill) {
             return null;
         }
 
-        const { order, ...billData } = bill;
+        const {
+            order,
+            ...billData
+        } = bill;
 
         return {
             ...billData,
-            orderNumber: order.orderNumber,
+            orderNumber:
+                order.orderNumber,
         };
     }
 
     // ============================================================
     // MARK:CREATE BILL
     // ============================================================
-    async createBill(data: any) {
+    async createBill(data: {
+        orderId: string;
+        employeeId: string;
+        shopId: string;
+    }) {
         return prisma.$transaction(async (tx) => {
             // ----------------------------------------------------
             // 1. Find order
             // ----------------------------------------------------
-            const order = await tx.order.findUnique({
+            const order = await tx.order.findFirst({
                 where: {
                     id: data.orderId,
+                    customer: {
+                        shopId: data.shopId,
+                    },
                 },
                 include: {
                     items: true,

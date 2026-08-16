@@ -4,13 +4,16 @@ import { OrderService } from "../services/order.service";
 const orderService = new OrderService();
 
 export class OrderController {
-    
+
     async getOrders(req: Request, res: Response) {
         const date = req.query.date
             ? String(req.query.date)
             : undefined;
 
-        const data = await orderService.getOrders(date);
+        const data = await orderService.getOrders(
+            req.user!,
+            date
+        );
 
         res.json({
             success: true,
@@ -18,10 +21,10 @@ export class OrderController {
         });
     }
 
-
     async getOrder(req: Request, res: Response) {
         const order = await orderService.getOrder(
-            String(req.params.id)
+            String(req.params.id),
+            req.user!
         );
 
         if (!order) {
@@ -38,7 +41,10 @@ export class OrderController {
     }
 
     async createOrder(req: Request, res: Response) {
-        const order = await orderService.createOrder(req.body);
+        const order = await orderService.createOrder(
+            req.body,
+            req.user!
+        );
 
         res.status(201).json({
             success: true,
@@ -50,7 +56,8 @@ export class OrderController {
     async updateOrder(req: Request, res: Response) {
         const order = await orderService.updateOrder(
             String(req.params.id),
-            req.body
+            req.body,
+            req.user!
         );
 
         res.json({
@@ -61,7 +68,10 @@ export class OrderController {
     }
 
     async deleteOrder(req: Request, res: Response) {
-        await orderService.deleteOrder(String(req.params.id));
+        await orderService.deleteOrder(
+            String(req.params.id),
+            req.user!
+        );
 
         res.json({
             success: true,

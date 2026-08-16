@@ -18,6 +18,7 @@ model Shop {
   otps      OTP[]
   sequences Sequence[]
   users     ShopUser[]
+  areas Area[]
 
   @@index([isActive])
   @@map("shops")
@@ -532,10 +533,16 @@ model Sequence {
 
 model Area {
   id        String     @id
-  name      String     @unique
+  shopId    String
+  name      String
   createdAt DateTime   @default(now())
-  updatedAt DateTime
+  updatedAt DateTime   @updatedAt
+
+  shop      Shop       @relation(fields: [shopId], references: [id], onDelete: Cascade)
   customers Customer[]
+
+  @@unique([shopId, name])
+  @@index([shopId])
 }
 
 enum ShopUserRole {

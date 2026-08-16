@@ -14,7 +14,8 @@ export class AccountController {
     ) {
         try {
             const data =
-                await accountService.getAccounts();
+                await accountService.getAccounts(req.user!
+                );
 
             res.json({
                 success: true,
@@ -38,7 +39,8 @@ export class AccountController {
         try {
             const data =
                 await accountService.getOutstandingBills(
-                    String(req.params.customerId)
+                    String(req.params.customerId),
+                    req.user!
                 );
 
             res.json({
@@ -63,7 +65,8 @@ export class AccountController {
         try {
             const account =
                 await accountService.getAccount(
-                    String(req.params.id)
+                    String(req.params.id),
+                    req.user!
                 );
 
             if (!account) {

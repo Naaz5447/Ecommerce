@@ -1,49 +1,59 @@
 import { prisma } from "../config/prisma";
+import { ShopUserRole } from "@prisma/client";
 
 export class CustomerRepository {
-    async getCustomers(shopId: string) {
+    async getCustomers(
+        shopId: string,
+        userId: string,
+        role: ShopUserRole
+    ) {
         return prisma.customer.findMany({
             where: {
                 shopId,
+
+                ...(role === ShopUserRole.CUSTOMER && {
+                    userId,
+                }),
             },
+
             include: {
                 area: true,
-                user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        phone: true,
-                        email: true,
-                        avatar: true,
+
+                customerProductRates: {
+                    include: {
+                        product: {
+                            select: {
+                                id: true,
+                                name: true,
+                                sku: true,
+                                price: true,
+                                unit: true,
+                            },
+                        },
                     },
                 },
             },
-            orderBy: {
-                createdAt: "desc",
-            },
         });
     }
-
     async getCustomer(
         id: string,
-        shopId: string
+        shopId: string,
+        userId: string,
+        role: ShopUserRole
     ) {
         return prisma.customer.findFirst({
             where: {
                 id,
                 shopId,
+
+                ...(role === ShopUserRole.CUSTOMER && {
+                    userId,
+                }),
             },
+
             include: {
                 area: true,
-                user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        phone: true,
-                        email: true,
-                        avatar: true,
-                    },
-                },
+
                 customerProductRates: {
                     include: {
                         product: {
@@ -94,12 +104,17 @@ export class CustomerRepository {
             mobile?: string;
             address?: string;
             areaId?: string | null;
-        }
+        },
+        userId?: string
     ) {
         const customer = await prisma.customer.findFirst({
             where: {
                 id,
                 shopId,
+
+                ...(userId && {
+                    userId,
+                }),
             },
         });
 
@@ -111,7 +126,12 @@ export class CustomerRepository {
             where: {
                 id,
             },
-            data,
+            data: {
+                name: data.name,
+                mobile: data.mobile,
+                address: data.address,
+                areaId: data.areaId,
+            },
             include: {
                 area: true,
             },

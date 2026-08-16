@@ -1,17 +1,35 @@
 import { prisma } from "../config/prisma";
+import { ShopUserRole } from "@prisma/client";
+import { PublicUser } from "./user.repository";
 
 export class AccountRepository {
     // ============================================================
     // GET ALL ACCOUNTS
     // ============================================================
-    async getAccounts() {
+    async getAccounts(user: PublicUser) {
         return prisma.account.findMany({
+            where:
+                user.role === ShopUserRole.ADMIN
+                    ? {
+                        customer: {
+                            shopId: user.shopId,
+                        },
+                    }
+                    : {
+                        customer: {
+                            shopId: user.shopId,
+                            userId: user.id,
+                        },
+                    },
+
             orderBy: {
                 collectionDate: "desc",
             },
+
             include: {
                 customer: true,
                 bank: true,
+
                 billAllocations: {
                     include: {
                         bill: true,
@@ -24,10 +42,23 @@ export class AccountRepository {
     // ============================================================
     // GET OUTSTANDING BILLS FOR CUSTOMER
     // ============================================================
-    async getOutstandingBills(customerId: string) {
+    async getOutstandingBills(
+        customerId: string,
+        user: PublicUser
+    ) {
         return prisma.bill.findMany({
             where: {
                 customerId,
+
+                customer:
+                    user.role === ShopUserRole.ADMIN
+                        ? {
+                            shopId: user.shopId,
+                        }
+                        : {
+                            shopId: user.shopId,
+                            userId: user.id,
+                        },
 
                 pendingAmount: {
                     gt: 0,
@@ -65,10 +96,23 @@ export class AccountRepository {
     // ============================================================
     // GET SINGLE ACCOUNT
     // ============================================================
-    async getAccountById(id: string) {
-        return prisma.account.findUnique({
+    async getAccountById(
+        id: string,
+        user: PublicUser
+    ) {
+        return prisma.account.findFirst({
             where: {
                 id,
+
+                customer:
+                    user.role === ShopUserRole.ADMIN
+                        ? {
+                            shopId: user.shopId,
+                        }
+                        : {
+                            shopId: user.shopId,
+                            userId: user.id,
+                        },
             },
 
             include: {

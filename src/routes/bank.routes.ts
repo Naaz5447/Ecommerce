@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { BankController } from "../controllers/bank.controller";
+import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
 const controller = new BankController();
+router.use(authenticate);
+
 
 router.get("/", controller.getBanks.bind(controller));
 router.get("/:id", controller.getBank.bind(controller));

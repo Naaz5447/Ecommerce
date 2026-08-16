@@ -1,21 +1,36 @@
 import { AppError } from "../utils/app-error";
 import { CustomerRepository } from "../repositories/customer.repository";
 import { generateCode } from "../utils/code-generator";
+import { PublicUser } from "../repositories/user.repository";
+import { ShopUserRole } from "@prisma/client";
 
 const customerRepository = new CustomerRepository();
 
 export class CustomerService {
-  async getCustomers(shopId: string) {
-    return customerRepository.getCustomers(shopId);
+
+  async getCustomers(
+    shopId: string,
+    userId: string,
+    role: ShopUserRole
+  ) {
+    return customerRepository.getCustomers(
+      shopId,
+      userId,
+      role
+    );
   }
 
   async getCustomer(
     id: string,
-    shopId: string
+    shopId: string,
+    userId: string,
+    role: ShopUserRole
   ) {
     return customerRepository.getCustomer(
       id,
-      shopId
+      shopId,
+      userId,
+      role
     );
   }
 
@@ -62,7 +77,8 @@ export class CustomerService {
       mobile?: string;
       address?: string;
       areaId?: string | null;
-    }
+    },
+    user: PublicUser
   ) {
     if (data.mobile) {
       const existing =
@@ -86,14 +102,14 @@ export class CustomerService {
       await customerRepository.updateCustomer(
         id,
         shopId,
-        data
+        data,
+        user.role === ShopUserRole.CUSTOMER
+          ? user.id
+          : undefined
       );
 
     if (!customer) {
-      throw new AppError(
-        "Customer not found",
-        404
-      );
+      throw new AppError("Customer not found", 404);
     }
 
     return customer;

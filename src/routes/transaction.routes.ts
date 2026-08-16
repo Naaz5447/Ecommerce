@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { TransactionController } from "../controllers/transaction.controller";
+import { authenticate } from "../middleware/auth.middleware";
+import { requireRole } from "../middleware/role.middleware";
+import { ShopUserRole } from "@prisma/client";
 
 const router = Router();
+router.use(authenticate);
+router.use(requireRole(ShopUserRole.ADMIN));
 const controller = new TransactionController();
 
 router.get("/", controller.getTransactions.bind(controller));
