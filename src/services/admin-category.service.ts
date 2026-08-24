@@ -1,12 +1,14 @@
 import { AdminCategoryRepository } from "../repositories/admin-category.repository";
 import { getImageUrl } from "../utils/image-url";
 
-const adminCategoryRepository = new AdminCategoryRepository();
+const adminCategoryRepository =
+    new AdminCategoryRepository();
 
 export class AdminCategoryService {
+    async getCategories(shopId: string) {
+        const categories =
+            await adminCategoryRepository.getCategories(shopId);
 
-    async getCategories() {
-        const categories = await adminCategoryRepository.getCategories();
 
         return categories.map((category) => ({
             ...category,
@@ -14,8 +16,12 @@ export class AdminCategoryService {
         }));
     }
 
-    async getCategory(id: string) {
-        const category = await adminCategoryRepository.getCategoryById(id);
+    async getCategory(id: string, shopId: string) {
+        const category =
+            await adminCategoryRepository.getCategoryById(
+                id,
+                shopId
+            );
 
         if (!category) {
             return null;
@@ -26,25 +32,19 @@ export class AdminCategoryService {
             image: getImageUrl(category.image),
         };
     }
-
-    async createCategory(data: any) {
+    async createCategory(shopId: string, data: any) {
         const exists =
-            await adminCategoryRepository.getBySlug(data.slug);
+            await adminCategoryRepository.getBySlug(
+                data.slug,
+                shopId
+            );
+
         if (exists) {
             throw new Error("Category slug already exists");
         }
+
         return adminCategoryRepository.createCategory({
-            name: data.name,
-            slug: data.slug,
-            description: data.description,
-            sortOrder: Number(data.sortOrder) || 0,
-            image: data.image,
-        });
-
-    }
-
-    async updateCategory(id: string, data: any) {
-        return adminCategoryRepository.updateCategory(id, {
+            shopId,
             name: data.name,
             slug: data.slug,
             description: data.description,
@@ -52,8 +52,28 @@ export class AdminCategoryService {
             image: data.image,
         });
     }
-
-    async deleteCategory(id: string) {
-        return adminCategoryRepository.deleteCategory(id);
+    async updateCategory(
+        id: string,
+        shopId: string,
+        data: any
+    ) {
+        return adminCategoryRepository.updateCategory(
+            id,
+            shopId,
+            {
+                name: data.name,
+                slug: data.slug,
+                description: data.description,
+                sortOrder: Number(data.sortOrder) || 0,
+                image: data.image,
+            }
+        );
     }
+    async deleteCategory(id: string, shopId: string) {
+        return adminCategoryRepository.deleteCategory(
+            id,
+            shopId
+        );
+    }
+
 }

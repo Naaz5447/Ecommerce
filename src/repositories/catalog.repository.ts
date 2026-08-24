@@ -1,26 +1,53 @@
 import { prisma } from "../config/prisma";
 
 export class CatalogRepository {
-  async getActiveCategories() {
+  async getActiveCategories(shopId: string) {
     return prisma.category.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: "asc", },
+      where: {
+        shopId,
+        isActive: true,
+      },
+      orderBy: {
+        sortOrder: "asc",
+      },
       select: {
-        id: true, name: true, slug: true, image: true, description: true,
-        _count: { select: { products: { where: { isActive: true }, }, }, },
+        id: true,
+        name: true,
+        slug: true,
+        image: true,
+        description: true,
+        _count: {
+          select: {
+            products: {
+              where: {
+                isActive: true,
+              },
+            },
+          },
+        },
       },
     });
   }
 
   async getProducts(params: {
+    shopId: string;
     page: number;
     limit: number;
     category?: string;
     search?: string;
   }) {
-    const { page, limit, category, search } = params;
+    const {
+      shopId,
+      page,
+      limit,
+      category,
+      search,
+    } = params;
+
     const where = {
+      shopId,
       isActive: true,
+
       ...(category
         ? {
           categoryId: category,
@@ -41,50 +68,127 @@ export class CatalogRepository {
       prisma.product.findMany({
         where,
         include: {
-          category: { select: { id: true, name: true, slug: true, }, },
-          images: { orderBy: { sortOrder: "asc", }, },
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+          images: {
+            orderBy: {
+              sortOrder: "asc",
+            },
+          },
         },
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { createdAt: "desc", },
+        orderBy: {
+          createdAt: "desc",
+        },
       }),
-      prisma.product.count({ where, }),
+
+      prisma.product.count({
+        where,
+      }),
     ]);
-    return { products, total, };
+
+    return {
+      products,
+      total,
+    };
   }
 
-  async getProductById(id: string) {
-    return prisma.product.findUnique({
-      where: { id },
+  async getProductById(
+    id: string,
+    shopId: string
+  ) {
+    return prisma.product.findFirst({
+      where: {
+        id,
+        shopId,
+        isActive: true,
+      },
       include: {
         category: true,
-        images: { orderBy: { sortOrder: "asc", }, },
+        images: {
+          orderBy: {
+            sortOrder: "asc",
+          },
+        },
       },
     });
   }
 
-  async getHomeData() {
+  async getHomeData(shopId: string) {
     const [
       banners,
       categories,
       offers,
       featuredProducts,
     ] = await Promise.all([
+      /*
+       * Banner does NOT have shopId or isFeatured
+       * in your current Prisma schema.
+       *
+       * Therefore don't filter it by shopId.
+       */
       prisma.banner.findMany({
-        where: { isActive: true, },
-      }),
-      prisma.category.findMany({
-        where: { isActive: true, },
-        orderBy: { sortOrder: "asc", },
-        take: 8,
-      }),
-      prisma.offer.findMany({
-        where: { isActive: true, },
+        where: {
+          isActive: true,
+        },
       }),
 
+      /*
+       * Category belongs to a shop.
+       */
+      prisma.category.findMany({
+        where: {
+          shopId,
+          isActive: true,
+        },
+        orderBy: {
+          sortOrder: "asc",
+        },
+        take: 8,
+      }),
+
+      /*
+       * Offer also does NOT have shopId
+       * in your current Prisma schema.
+       */
+      prisma.offer.findMany({
+        where: {
+          isActive: true,
+        },
+      }),
+
+      /*
+       * Product belongs to a shop.
+       */
       prisma.product.findMany({
-        where: { isActive: true, isFeatured: true, },
-        include: { images: true, },
+        where: {
+          shopId,
+          isActive: true,
+          isFeatured: true,
+        },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+          images: {
+            orderBy: {
+              sortOrder: "asc",
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
         take: 10,
       }),
     ]);

@@ -1,13 +1,13 @@
 import { prisma } from "../config/prisma";
 
 export class AdminDashboardRepository {
-    async getCounts() {
+    async getCounts(shopId: string) {
         const [categories, products] = await Promise.all([
             prisma.category.count({
-                where: { isActive: true },
+                where: { shopId, isActive: true },
             }),
             prisma.product.count({
-                where: { isActive: true },
+                where: { shopId, isActive: true },
             }),
         ]);
 

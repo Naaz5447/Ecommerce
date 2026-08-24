@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { CatalogController } from "../controllers/catalog.controller";
-
+import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router();
 
 const controller = new CatalogController();
+
+router.use(authenticate);
 
 router.get("/home", controller.home);
 router.get("/categories", controller.categories);

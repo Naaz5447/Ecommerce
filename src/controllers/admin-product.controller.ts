@@ -8,17 +8,22 @@ export class AdminProductController {
 
     async getProducts(req: Request, res: Response) {
         const products =
-            await adminProductService.getProducts();
+            await adminProductService.getProducts(
+                req.user!.shopId
+            );
+
         res.json({
             success: true,
             data: products,
         });
     }
 
+
     async getProduct(req: Request, res: Response) {
         const product =
             await adminProductService.getProduct(
-                String(req.params.id)
+                String(req.params.id),
+                req.user!.shopId
             );
 
         if (!product) {
@@ -33,6 +38,7 @@ export class AdminProductController {
             data: product,
         });
     }
+
 
     async createProduct(req: Request, res: Response) {
         try {
@@ -50,12 +56,18 @@ export class AdminProductController {
                     );
             }
 
+            const shopId = req.user!.shopId;
+
             const product =
-                await adminProductService.createProduct({
-                    ...req.body,
-                    image: imageUrl,
-                    images: files?.images ?? [],
-                });
+                await adminProductService.createProduct(
+                    shopId,
+                    {
+                        ...req.body,
+                        image: imageUrl,
+                        images: files?.images ?? [],
+                    }
+                );
+
 
             res.status(201).json({
                 success: true,
@@ -91,6 +103,7 @@ export class AdminProductController {
             const product =
                 await adminProductService.updateProduct(
                     String(req.params.id),
+                    req.user!.shopId,
                     {
                         ...req.body,
                         image: imageUrl,
@@ -115,7 +128,8 @@ export class AdminProductController {
 
     async deleteProduct(req: Request, res: Response) {
         await adminProductService.deleteProduct(
-            String(req.params.id)
+            String(req.params.id),
+            req.user!.shopId
         );
 
         res.json({

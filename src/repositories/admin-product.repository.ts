@@ -1,35 +1,75 @@
 import { prisma } from "../config/prisma";
 
-
 export class AdminProductRepository {
 
-    async getProducts() {
+
+    async getProducts(shopId: string) {
         return prisma.product.findMany({
-            where: { isActive: true },
-            orderBy: { createdAt: "desc", },
+            where: {
+                shopId,
+                isActive: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
             include: {
                 category: {
-                    select: { id: true, name: true, slug: true },
+                    select: {
+                        id: true,
+                        name: true,
+                        slug: true,
+                    },
                 },
                 images: {
-                    orderBy: { sortOrder: "asc", },
+                    orderBy: {
+                        sortOrder: "asc",
+                    },
                 },
             },
         });
     }
-    async getProductById(id: string) {
-        return prisma.product.findUnique({
-            where: { id, isActive: true, },
+
+
+    async getProductById(
+        id: string,
+        shopId: string
+    ) {
+        return prisma.product.findFirst({
+            where: {
+                id,
+                shopId,
+                isActive: true,
+            },
             include: {
                 category: true,
-                images: { orderBy: { sortOrder: "asc" } }
-            }
+                images: {
+                    orderBy: {
+                        sortOrder: "asc",
+                    },
+                },
+            },
         });
     }
 
+    async categoryBelongsToShop(
+        categoryId: string,
+        shopId: string
+    ) {
+        return prisma.category.findFirst({
+            where: {
+                id: categoryId,
+                shopId,
+                isActive: true,
+            },
+            select: {
+                id: true,
+            },
+        });
+    }
     async createProduct(data: any) {
         return prisma.product.create({
             data: {
+                shopId: data.shopId,
                 categoryId: data.categoryId,
                 name: data.name,
                 slug: data.slug,
@@ -46,43 +86,31 @@ export class AdminProductRepository {
                 quantityType: data.quantityType,
                 image: data.image,
                 isFeatured: data.isFeatured,
-            }
-
+            },
         });
-
     }
 
     async createImages(
         productId: string,
         images: string[]
     ) {
-
         return prisma.productImage.createMany({
-
             data: images.map((image, index) => ({
-
                 productId,
-
                 image,
-
-                sortOrder: index + 1
-
-            }))
-
+                sortOrder: index + 1,
+            })),
         });
-
     }
 
     async updateProduct(
         id: string,
+        shopId: string,
         data: any
     ) {
-
         const updateData: any = {};
 
-
         const fields = [
-
             "categoryId",
             "name",
             "slug",
@@ -93,63 +121,52 @@ export class AdminProductRepository {
             "unit",
             "quantity",
             "quantityType",
-            "image"
+            "image",
         ];
 
-
-        fields.forEach(field => {
-
+        fields.forEach((field) => {
             if (data[field] !== undefined) {
-
                 updateData[field] = data[field];
-
             }
-
         });
 
-
-
-        if (data.minimumOrderQuantity) {
-
+        if (data.minimumOrderQuantity !== undefined) {
             updateData.minimumOrderQuantity =
                 Number(data.minimumOrderQuantity);
-
         }
 
-
-        if (data.stockQuantity) {
-
+        if (data.stockQuantity !== undefined) {
             updateData.stockQuantity =
                 Number(data.stockQuantity);
-
         }
-
 
         if (data.isFeatured !== undefined) {
-
             updateData.isFeatured =
+                data.isFeatured === true ||
                 data.isFeatured === "true";
-
         }
 
-
-
-        return prisma.product.update({
-
+        return prisma.product.updateMany({
             where: {
-                id
+                id,
+                shopId,
             },
-
-            data: updateData
-
+            data: updateData,
         });
-
     }
 
-    async deleteProduct(id: string) {
-        return prisma.product.update({
-            where: { id },
-            data: { isActive: false }
+    async deleteProduct(
+        id: string,
+        shopId: string
+    ) {
+        return prisma.product.updateMany({
+            where: {
+                id,
+                shopId,
+            },
+            data: {
+                isActive: false,
+            },
         });
     }
 }

@@ -2,54 +2,107 @@ import { prisma } from "../config/prisma";
 
 export class AdminCategoryRepository {
 
-    async getCategories() {
+    async getCategories(shopId: string) {
         return prisma.category.findMany({
-            where: { isActive: true },
-            orderBy: { sortOrder: "asc", },
+            where: {
+                shopId,
+                isActive: true,
+            },
+            orderBy: {
+                sortOrder: "asc",
+            },
             include: {
-                _count: { select: { products: { where: { isActive: true, }, }, }, },
+                _count: {
+                    select: {
+                        products: {
+                            where: {
+                                isActive: true,
+                            },
+                        },
+                    },
+                },
             },
         });
     }
 
-    async getCategoryById(id: string) {
-        return prisma.category.findUnique({
-            where: { id, },
+
+    async getCategoryById(id: string, shopId: string) {
+        return prisma.category.findFirst({
+            where: {
+                id,
+                shopId,
+            },
             include: {
-                _count: { select: { products: { where: { isActive: true, }, }, }, },
+                _count: {
+                    select: {
+                        products: {
+                            where: {
+                                isActive: true,
+                            },
+                        },
+                    },
+                },
             },
         });
     }
+
 
     async createCategory(data: {
+        shopId: string;
         name: string;
         slug: string;
         description?: string;
         sortOrder: number;
-        image?: string;
-    }) { return prisma.category.create({ data, }); }
-
+        image?: string | null;
+    }) {
+        return prisma.category.create({
+            data,
+        });
+    }
     async updateCategory(
         id: string,
+        shopId: string,
         data: {
             name: string;
             slug: string;
             description?: string;
             sortOrder: number;
-            image?: string;
+            image?: string | null;
         }
     ) {
-        if (!data.image) { delete data.image; }
-        return prisma.category.update({ where: { id, }, data, });
-    }
+        if (!data.image) {
+            delete data.image;
+        }
 
-    async deleteCategory(id: string) {
-        return prisma.category.update({
-            where: { id, }, data: { isActive: false, },
+        return prisma.category.updateMany({
+            where: {
+                id,
+                shopId,
+            },
+            data,
         });
     }
 
-    async getBySlug(slug: string) {
-        return prisma.category.findUnique({ where: { slug } });
+    async deleteCategory(id: string, shopId: string) {
+        return prisma.category.updateMany({
+            where: {
+                id,
+                shopId,
+            },
+            data: {
+                isActive: false,
+            },
+        });
     }
+
+
+    async getBySlug(slug: string, shopId: string) {
+        return prisma.category.findFirst({
+            where: {
+                slug,
+                shopId,
+            },
+        });
+    }
+
 }

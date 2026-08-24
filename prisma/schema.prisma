@@ -8,17 +8,20 @@ datasource db {
 }
 
 model Shop {
-  id        String     @id @default(uuid())
-  shopId    String     @unique
+  id        String   @id @default(uuid())
+  shopId    String   @unique
   name      String
-  isActive  Boolean    @default(true)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  customers Customer[]
-  otps      OTP[]
-  sequences Sequence[]
-  users     ShopUser[]
-  areas Area[]
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customers  Customer[]
+  otps       OTP[]
+  sequences  Sequence[]
+  users      ShopUser[]
+  areas      Area[]
+  categories Category[]
+  products   Product[]
 
   @@index([isActive])
   @@map("shops")
@@ -72,54 +75,63 @@ model OTP {
 }
 
 model Category {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
+  shopId      String
   name        String
-  slug        String    @unique
+  slug        String
   image       String?
   description String?
-  sortOrder   Int       @default(0)
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  products    Product[]
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
+  shop     Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([shopId, slug])
+  @@index([shopId])
   @@index([isActive])
-  @@index([slug])
   @@index([sortOrder])
   @@map("categories")
 }
 
 model Product {
-  id                   String                @id @default(uuid())
+  id                   String   @id @default(uuid())
+  shopId               String
   categoryId           String
   name                 String
-  slug                 String                @unique
+  slug                 String
   description          String?
-  sku                  String                @unique
-  mrp                  Decimal               @db.Decimal(10, 2)
-  price                Decimal               @db.Decimal(10, 2)
-  minimumOrderQuantity Int                   @default(1)
-  stockQuantity        Int                   @default(0)
+  sku                  String
+  mrp                  Decimal  @db.Decimal(10, 2)
+  price                Decimal  @db.Decimal(10, 2)
+  minimumOrderQuantity Int      @default(1)
+  stockQuantity        Int      @default(0)
   unit                 String
-  quantity             Decimal?              @db.Decimal(10, 2)
+  quantity             Decimal? @db.Decimal(10, 2)
   quantityType         String?
   image                String?
-  isFeatured           Boolean               @default(false)
-  isActive             Boolean               @default(true)
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
-  billItems            BillItem[]
-  customerRates        CustomerProductRate[]
-  orderItems           OrderItem[]
-  images               ProductImage[]
-  category             Category              @relation(fields: [categoryId], references: [id])
-  saleItems            SaleItem[]
+  isFeatured           Boolean  @default(false)
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
+  shop     Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id])
+
+  billItems     BillItem[]
+  customerRates CustomerProductRate[]
+  orderItems    OrderItem[]
+  images        ProductImage[]
+  saleItems     SaleItem[]
+
+  @@unique([shopId, slug])
+  @@unique([shopId, sku])
+  @@index([shopId])
   @@index([categoryId])
   @@index([isActive])
   @@index([isFeatured])
-  @@index([slug])
-  @@index([sku])
   @@map("products")
 }
 
@@ -532,11 +544,11 @@ model Sequence {
 }
 
 model Area {
-  id        String     @id
+  id        String   @id
   shopId    String
   name      String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   shop      Shop       @relation(fields: [shopId], references: [id], onDelete: Cascade)
   customers Customer[]

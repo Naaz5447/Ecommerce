@@ -4,79 +4,120 @@ import { getImageUrl } from "../utils/image-url";
 const catalogRepository = new CatalogRepository();
 
 export class CatalogService {
-
     private formatProduct(product: any) {
         const discountPercentage =
             product.mrp && product.price
                 ? Math.round(
                     ((Number(product.mrp) - Number(product.price)) /
-                        Number(product.mrp)) * 100
+                        Number(product.mrp)) *
+                    100
                 )
                 : 0;
+
         return {
             ...product,
+
             mrp: Number(product.mrp),
             price: Number(product.price),
+
             discountPercentage,
+
             image: getImageUrl(product.image),
+
             images: product.images.map((image: any) => ({
                 ...image,
-                image: getImageUrl(image.image)
-            }))
+                image: getImageUrl(image.image),
+            })),
         };
     }
-    async getHome() {
-        const data = await catalogRepository.getHomeData();
+
+    async getHome(shopId: string) {
+        const data =
+            await catalogRepository.getHomeData(shopId);
+
         return {
             banners: data.banners.map((banner) => ({
-                ...banner, image: getImageUrl(banner.image),
+                ...banner,
+                image: getImageUrl(banner.image),
             })),
+
             categories: data.categories.map((category) => ({
                 ...category,
                 image: getImageUrl(category.image),
             })),
+
             offers: data.offers.map((offer) => ({
                 ...offer,
                 image: getImageUrl(offer.image),
             })),
-            featuredProducts: data.featuredProducts.map((product) => ({
-                ...product,
-                image: getImageUrl(product.image),
-                images: product.images.map((image) => ({
-                    ...image,
-                    image: getImageUrl(image.image),
-                })),
-            })),
+
+            featuredProducts:
+                data.featuredProducts.map((product) =>
+                    this.formatProduct(product)
+                ),
         };
     }
 
-    async getCategories() {
-        const categories = await catalogRepository.getActiveCategories();
+    async getCategories(shopId: string) {
+        const categories =
+            await catalogRepository.getActiveCategories(
+                shopId
+            );
+
         return categories.map((category) => ({
             ...category,
-            image: getImageUrl(category.image),
-            itemCount: category._count.products,
-        }));
 
+            image: getImageUrl(category.image),
+
+            itemCount:
+                category._count.products,
+        }));
     }
-    async getProducts(query: any) {
-        const page = Math.max(Number(query.page) || 1, 1);
-        const limit = Math.min(Math.max(Number(query.limit) || 20, 1), 100);
+
+    async getProducts(
+        shopId: string,
+        query: any
+    ) {
+        const page = Math.max(
+            Number(query.page) || 1,
+            1
+        );
+
+        const limit = Math.min(
+            Math.max(Number(query.limit) || 20, 1),
+            100
+        );
+
         const search =
             typeof query.search === "string"
                 ? query.search.trim()
                 : undefined;
+
         const category =
             typeof query.category === "string"
                 ? query.category
                 : undefined;
-        const data = await catalogRepository.getProducts({ page, limit, category, search, });
-        const products = data.products.map((product) =>
-            this.formatProduct(product)
-        );
-        const totalPages = Math.ceil(data.total / limit);
+
+        const data =
+            await catalogRepository.getProducts({
+                shopId,
+                page,
+                limit,
+                category,
+                search,
+            });
+
+        const products =
+            data.products.map((product) =>
+                this.formatProduct(product)
+            );
+
+        const totalPages =
+            Math.ceil(data.total / limit);
+
         return {
             products,
+
             pagination: {
                 page,
                 limit,
@@ -87,12 +128,21 @@ export class CatalogService {
             },
         };
     }
-    async getProduct(id: string) {
+
+    async getProduct(
+        id: string,
+        shopId: string
+    ) {
         const product =
-            await catalogRepository.getProductById(id);
-        if (!product) { return null; }
+            await catalogRepository.getProductById(
+                id,
+                shopId
+            );
+
+        if (!product) {
+            return null;
+        }
+
         return this.formatProduct(product);
     }
-
 }
-
