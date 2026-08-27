@@ -3,32 +3,36 @@ import { CatalogService } from "../services/catalog.service";
 
 const catalogService = new CatalogService();
 
-export class CatalogController {
-    private getShopId(req: Request, res: Response): string | null {
-        const shopId = req.query.shopId;
+const getShopId = (
+    req: Request,
+    res: Response
+): string | null => {
+    const shopId = req.query.shopId;
 
-        if (
-            typeof shopId !== "string" ||
-            !shopId.trim()
-        ) {
-            res.status(400).json({
-                success: false,
-                message: "shopId is required",
-                errors: null,
-            });
+    if (
+        typeof shopId !== "string" ||
+        !shopId.trim()
+    ) {
+        res.status(400).json({
+            success: false,
+            message: "shopId is required",
+            errors: null,
+        });
 
-            return null;
-        }
-
-        return shopId.trim();
+        return null;
     }
 
+    return shopId.trim();
+};
+
+export class CatalogController {
     async home(req: Request, res: Response) {
-        const shopId = this.getShopId(req, res);
+        const shopId = getShopId(req, res);
 
         if (shopId === null) return;
 
-        const data = await catalogService.getHome(shopId);
+        const data =
+            await catalogService.getHome(shopId);
 
         return res.json({
             success: true,
@@ -37,7 +41,7 @@ export class CatalogController {
     }
 
     async categories(req: Request, res: Response) {
-        const shopId = this.getShopId(req, res);
+        const shopId = getShopId(req, res);
 
         if (shopId === null) return;
 
@@ -51,7 +55,7 @@ export class CatalogController {
     }
 
     async products(req: Request, res: Response) {
-        const shopId = this.getShopId(req, res);
+        const shopId = getShopId(req, res);
 
         if (shopId === null) return;
 
@@ -71,7 +75,7 @@ export class CatalogController {
         req: Request,
         res: Response
     ) {
-        const shopId = this.getShopId(req, res);
+        const shopId = getShopId(req, res);
 
         if (shopId === null) return;
 
