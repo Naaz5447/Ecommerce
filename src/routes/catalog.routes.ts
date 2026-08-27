@@ -6,7 +6,7 @@ const router = Router();
 
 const controller = new CatalogController();
 
-router.use(authenticate);
+// router.use(authenticate);
 
 router.get("/home", controller.home);
 router.get("/categories", controller.categories);

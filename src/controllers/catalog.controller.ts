@@ -4,37 +4,64 @@ import { CatalogService } from "../services/catalog.service";
 const catalogService = new CatalogService();
 
 export class CatalogController {
-    async home(req: Request, res: Response) {
-        const data = await catalogService.getHome(
-            req.user!.shopId
-        );
+    private getShopId(req: Request, res: Response): string | null {
+        const shopId = req.query.shopId;
 
-        res.json({
+        if (
+            typeof shopId !== "string" ||
+            !shopId.trim()
+        ) {
+            res.status(400).json({
+                success: false,
+                message: "shopId is required",
+                errors: null,
+            });
+
+            return null;
+        }
+
+        return shopId.trim();
+    }
+
+    async home(req: Request, res: Response) {
+        const shopId = this.getShopId(req, res);
+
+        if (shopId === null) return;
+
+        const data = await catalogService.getHome(shopId);
+
+        return res.json({
             success: true,
             data,
         });
     }
 
     async categories(req: Request, res: Response) {
-        const data =
-            await catalogService.getCategories(
-                req.user!.shopId
-            );
+        const shopId = this.getShopId(req, res);
 
-        res.json({
+        if (shopId === null) return;
+
+        const data =
+            await catalogService.getCategories(shopId);
+
+        return res.json({
             success: true,
             data,
         });
     }
 
     async products(req: Request, res: Response) {
+        const shopId = this.getShopId(req, res);
+
+        if (shopId === null) return;
+
         const data =
             await catalogService.getProducts(
-                req.user!.shopId,
+                shopId,
                 req.query
             );
 
-        res.json({
+        return res.json({
             success: true,
             data,
         });
@@ -44,20 +71,25 @@ export class CatalogController {
         req: Request,
         res: Response
     ) {
+        const shopId = this.getShopId(req, res);
+
+        if (shopId === null) return;
+
         const product =
             await catalogService.getProduct(
                 String(req.params.id),
-                req.user!.shopId
+                shopId
             );
 
         if (!product) {
             return res.status(404).json({
                 success: false,
                 message: "Product not found",
+                errors: null,
             });
         }
 
-        res.json({
+        return res.json({
             success: true,
             data: product,
         });
