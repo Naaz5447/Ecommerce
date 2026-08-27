@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
 import { CatalogService } from "../services/catalog.service";
+import { prisma } from "../config/prisma";
 
 const catalogService = new CatalogService();
 
-const getShopId = (
+const getShopId = async (
     req: Request,
     res: Response
-): string | null => {
-    const shopId = req.query.shopId;
+): Promise<string | null> => {
+    const shopCode = req.query.shopId;
 
     if (
-        typeof shopId !== "string" ||
-        !shopId.trim()
+        typeof shopCode !== "string" ||
+        !shopCode.trim()
     ) {
         res.status(400).json({
             success: false,
@@ -22,12 +23,31 @@ const getShopId = (
         return null;
     }
 
-    return shopId.trim();
+    const shop = await prisma.shop.findUnique({
+        where: {
+            shopId: shopCode.trim(),
+        },
+        select: {
+            id: true,
+        },
+    });
+
+    if (!shop) {
+        res.status(404).json({
+            success: false,
+            message: "Shop not found",
+            errors: null,
+        });
+
+        return null;
+    }
+
+    return shop.id;
 };
 
 export class CatalogController {
     async home(req: Request, res: Response) {
-        const shopId = getShopId(req, res);
+        const shopId = await getShopId(req, res);
 
         if (shopId === null) return;
 
@@ -41,7 +61,7 @@ export class CatalogController {
     }
 
     async categories(req: Request, res: Response) {
-        const shopId = getShopId(req, res);
+        const shopId = await getShopId(req, res);
 
         if (shopId === null) return;
 
@@ -55,7 +75,7 @@ export class CatalogController {
     }
 
     async products(req: Request, res: Response) {
-        const shopId = getShopId(req, res);
+        const shopId = await getShopId(req, res);
 
         if (shopId === null) return;
 
@@ -75,7 +95,7 @@ export class CatalogController {
         req: Request,
         res: Response
     ) {
-        const shopId = getShopId(req, res);
+        const shopId = await getShopId(req, res);
 
         if (shopId === null) return;
 
