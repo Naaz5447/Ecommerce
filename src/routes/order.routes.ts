@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { OrderController } from "../controllers/order.controller";
 import { authenticate } from "../middleware/auth.middleware";
+import { requireRole } from "../middleware/role.middleware";
+import { ShopUserRole } from "@prisma/client";
 import { asyncHandler } from "../common/handlers/async.handler";
 
 const router = Router();
@@ -9,6 +11,15 @@ router.use(authenticate);
 
 const controller = new OrderController();
 
+// Customer: get own orders
+router.get(
+    "/my",
+    asyncHandler(
+        controller.getMyOrders.bind(controller)
+    )
+);
+
+// Admin + Customer
 router.get(
     "/",
     asyncHandler(
@@ -16,6 +27,16 @@ router.get(
     )
 );
 
+// Admin: get orders of a specific customer
+router.get(
+    "/customer/:customerId",
+    requireRole(ShopUserRole.ADMIN),
+    asyncHandler(
+        controller.getOrdersByCustomerId.bind(controller)
+    )
+);
+
+// Admin + Customer
 router.get(
     "/:id",
     asyncHandler(
@@ -23,6 +44,7 @@ router.get(
     )
 );
 
+// Admin + Customer
 router.post(
     "/",
     asyncHandler(
@@ -30,6 +52,7 @@ router.post(
     )
 );
 
+// Admin + Customer
 router.put(
     "/:id",
     asyncHandler(
@@ -37,6 +60,7 @@ router.put(
     )
 );
 
+// Admin + Customer
 router.delete(
     "/:id",
     asyncHandler(

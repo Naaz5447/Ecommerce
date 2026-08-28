@@ -73,6 +73,78 @@ export class OrderRepository {
         });
     }
 
+    async getMyOrders(user: PublicUser) {
+        const customer = await getCustomerForUser(user);
+
+        return prisma.order.findMany({
+            where: {
+                customerId: customer.id,
+            },
+
+            include: {
+                customer: true,
+
+                items: {
+                    include: {
+                        product: true,
+                    },
+                },
+
+                bill: true,
+            },
+
+            orderBy: {
+                orderDateTime: "desc",
+            },
+        });
+    }
+
+    async getOrdersByCustomerId(
+        customerId: string,
+        user: PublicUser
+    ) {
+        if (user.role !== ShopUserRole.ADMIN) {
+            throw new Error(
+                "Only admins can access customer orders"
+            );
+        }
+
+        const customer =
+            await prisma.customer.findFirst({
+                where: {
+                    id: customerId,
+                    shopId: user.shopId,
+                },
+            });
+
+        if (!customer) {
+            return [];
+        }
+
+        return prisma.order.findMany({
+            where: {
+                customerId: customer.id,
+            },
+
+            include: {
+                customer: true,
+
+                items: {
+                    include: {
+                        product: true,
+                    },
+                },
+
+                bill: true,
+            },
+
+            orderBy: {
+                orderDateTime: "desc",
+            },
+        });
+    }
+
+
     async getOrderById(
         id: string,
         user: PublicUser

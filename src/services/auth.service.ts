@@ -1,6 +1,7 @@
 import { findActiveShopByShopId } from "../repositories/shop.repository";
 import bcrypt from "bcrypt";
 import { ShopUserRole, UserStatus } from "@prisma/client";
+import { prisma } from "../config/prisma";
 
 import { AppError } from "../utils/app-error";
 
@@ -450,6 +451,16 @@ export const completeProfile = async (
     user.id,
     ShopUserRole.CUSTOMER
   );
+  await prisma.customer.create({
+    data: {
+      customerCode: `CUS-${Date.now()}`,
+      name: user.name,
+      mobile: user.phone,
+      shopId: shop.id,
+      userId: user.id,
+    },
+  });
+
 
   /**
    * OTP consumed.

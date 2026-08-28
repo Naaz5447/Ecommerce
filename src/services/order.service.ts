@@ -1,4 +1,3 @@
-import { ShopUserRole } from "@prisma/client";
 import { PublicUser } from "../repositories/user.repository";
 import { OrderRepository } from "../repositories/order.repository";
 
@@ -13,6 +12,20 @@ export class OrderService {
         return orderRepository.getOrders(
             user,
             date
+        );
+    }
+
+    async getMyOrders(user: PublicUser) {
+        return orderRepository.getMyOrders(user);
+    }
+
+    async getOrdersByCustomerId(
+        customerId: string,
+        user: PublicUser
+    ) {
+        return orderRepository.getOrdersByCustomerId(
+            customerId,
+            user
         );
     }
 
@@ -34,7 +47,9 @@ export class OrderService {
             customerId: data.customerId,
             customerName: data.customerName,
             area: data.area,
-            orderDateTime: new Date(data.orderDateTime),
+            orderDateTime: new Date(
+                data.orderDateTime
+            ),
             deliveryDate: data.deliveryDate
                 ? new Date(data.deliveryDate)
                 : null,
@@ -60,8 +75,10 @@ export class OrderService {
                 status: data.status,
                 items: data.items,
                 isOrderModified: true,
-                modificationCount: data.modificationCount,
-                modifications: data.modifications,
+                modificationCount:
+                    data.modificationCount,
+                modifications:
+                    data.modifications,
             },
             user
         );

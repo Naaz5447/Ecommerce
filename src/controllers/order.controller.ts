@@ -21,6 +21,40 @@ export class OrderController {
         });
     }
 
+    // CUSTOMER: Get my own orders
+    async getMyOrders(req: Request, res: Response) {
+        const orders = await orderService.getMyOrders(
+            req.user!
+        );
+
+        return res.json({
+            success: true,
+            data: orders,
+        });
+    }
+
+
+    // ADMIN: Get orders for a specific customer
+    async getOrdersByCustomerId(
+        req: Request,
+        res: Response
+    ) {
+        const customerId = String(
+            req.params.customerId
+        );
+
+        const data =
+            await orderService.getOrdersByCustomerId(
+                customerId,
+                req.user!
+            );
+
+        return res.json({
+            success: true,
+            data,
+        });
+    }
+
     async getOrder(req: Request, res: Response) {
         const order = await orderService.getOrder(
             String(req.params.id),
