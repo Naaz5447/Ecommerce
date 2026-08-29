@@ -31,6 +31,13 @@ export const createProductSchema = z.object({
 
     unit: z.string().optional(),
 
+    quantity: z.coerce
+        .number()
+        .positive("Quantity must be greater than 0")
+        .optional(),
+
+    quantityType: z.string().optional(),
+
     weight: z.coerce.number().optional(),
 
     isFeatured: z.coerce.boolean().optional(),

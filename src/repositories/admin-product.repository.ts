@@ -119,8 +119,6 @@ export class AdminProductRepository {
             "mrp",
             "price",
             "unit",
-            "quantity",
-            "quantityType",
             "image",
         ];
 
@@ -138,6 +136,19 @@ export class AdminProductRepository {
         if (data.stockQuantity !== undefined) {
             updateData.stockQuantity =
                 Number(data.stockQuantity);
+        }
+        if (data.quantity !== undefined) {
+            updateData.quantity =
+                data.quantity === null || data.quantity === ""
+                    ? null
+                    : Number(data.quantity);
+        }
+
+        if (data.quantityType !== undefined) {
+            updateData.quantityType =
+                data.quantityType === ""
+                    ? null
+                    : String(data.quantityType);
         }
 
         if (data.isFeatured !== undefined) {
