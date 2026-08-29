@@ -2,6 +2,7 @@ import { findActiveShopByShopId } from "../repositories/shop.repository";
 import bcrypt from "bcrypt";
 import { ShopUserRole, UserStatus } from "@prisma/client";
 import { prisma } from "../config/prisma";
+import { generateCode } from "../utils/code-generator";
 
 import { AppError } from "../utils/app-error";
 
@@ -374,19 +375,9 @@ export const completeProfile = async (
     email?: string;
   }
 ) => {
-  const shop = await findActiveShopByShopId(
-    payload.shopId
-  );
+  const shop = await findActiveShopByShopId(payload.shopId);
 
-  /**
-   * User must not already exist.
-   *
-   * Existing users are handled completely
-   * inside verifyOtp().
-   */
-  const existingUser = await findUserByPhone(
-    payload.phone
-  );
+  const existingUser = await findUserByPhone(payload.phone);
 
   if (existingUser) {
     ensureActiveUser(existingUser.status);
@@ -397,9 +388,6 @@ export const completeProfile = async (
     );
   }
 
-  /**
-   * Check OTP verification marker.
-   */
   const otpRecord = await findOtpByPhone(
     shop.id,
     payload.phone
@@ -434,37 +422,82 @@ export const completeProfile = async (
     );
   }
 
-  /**
-   * Create global user.
-   */
-  const user = await createUser({
-    phone: payload.phone,
-    name: payload.name,
-    email: payload.email,
+  const result = await prisma.$transaction(async (tx) => {
+    const user = await tx.user.create({
+      data: {
+        phone: payload.phone,
+        name: payload.name,
+        email: payload.email || null,
+      },
+    });
+
+    const membership = await tx.shopUser.create({
+      data: {
+        shopId: shop.id,
+        userId: user.id,
+        role: ShopUserRole.CUSTOMER,
+      },
+      include: {
+        user: true,
+        shop: true,
+      },
+    });
+
+    const existingCustomer = await tx.customer.findFirst({
+      where: {
+        shopId: shop.id,
+        mobile: payload.phone,
+      },
+    });
+
+    if (existingCustomer) {
+      await tx.customer.update({
+        where: {
+          id: existingCustomer.id,
+        },
+        data: {
+          userId: user.id,
+          name: payload.name,
+        },
+      });
+    } else {
+      const sequence = await tx.sequence.upsert({
+        where: {
+          id_shopId: {
+            id: "CUSTOMER",
+            shopId: shop.id,
+          },
+        },
+        update: {
+          value: {
+            increment: 1,
+          },
+        },
+        create: {
+          id: "CUSTOMER",
+          shopId: shop.id,
+          value: 1,
+        },
+      });
+
+      const customerCode =
+        `CUS${String(sequence.value).padStart(4, "0")}`;
+
+
+      await tx.customer.create({
+        data: {
+          customerCode,
+          name: payload.name,
+          mobile: payload.phone,
+          shopId: shop.id,
+          userId: user.id,
+        },
+      });
+    }
+
+    return { user, membership };
   });
 
-  /**
-   * Connect user to shop.
-   */
-  const membership = await createShopUser(
-    shop.id,
-    user.id,
-    ShopUserRole.CUSTOMER
-  );
-  await prisma.customer.create({
-    data: {
-      customerCode: `CUS-${Date.now()}`,
-      name: user.name,
-      mobile: user.phone,
-      shopId: shop.id,
-      userId: user.id,
-    },
-  });
-
-
-  /**
-   * OTP consumed.
-   */
   await deleteOtpByPhone(
     shop.id,
     payload.phone
@@ -474,19 +507,19 @@ export const completeProfile = async (
     profileCompleted: true,
 
     ...issueTokens(
-      user,
+      result.user,
       payload.shopId,
-      membership.role
+      result.membership.role
     ),
 
     user: toPublicUser(
-      user,
+      result.user,
       payload.shopId,
-      membership.role
+      result.membership.role
     ),
 
     shopId: payload.shopId,
-    role: membership.role,
+    role: result.membership.role,
   };
 };
 
