@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { EmployeeDesignationController } from "../controllers/employeeDesignation.controller";
-import { authenticate } from "../middleware/auth.middleware";
+import { EmployeeDesignationController } from "./employeeDesignation.controller";
+import { authenticate } from "../../middleware/auth.middleware";
 
 const router = Router();
 router.use(authenticate);

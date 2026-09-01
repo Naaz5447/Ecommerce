@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { EmployeeDesignationService } from "../services/employeeDesignation.service";
+import { EmployeeDesignationService } from "./employeeDesignation.service";
 
 
 const service = new EmployeeDesignationService();

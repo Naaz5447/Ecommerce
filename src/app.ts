@@ -14,7 +14,7 @@ import bankRoutes from "./modules/bank/bank.routes";
 import employeeRoutes from "./modules/employee/employee.routes";
 import accountRoutes from "./modules/account/account.routes";
 import customerRoutes from "./modules/customer/customer.routes";
-import expenseRoutes from "./routes/expense.routes";
+import expenseRoutes from "./modules/expense/expense.routes";
 import noteRoutes from "./modules/note/note.routes";
 import purchaseRoutes from "./modules/purchase/purchase.routes";
 import orderRoutes from "./modules/order/order.routes";
@@ -23,7 +23,7 @@ import transactionRoutes from "./modules/transaction/transaction.routes";
 import billRoutes from "./modules/bill/bill.routes";
 import paymentRoutes from "./modules/payment/payment.routes";
 import areaRoutes from "./modules/area/area.routes";
-import empDesignationRoutes from "./routes/employeeDesignation.routes";
+import empDesignationRoutes from "./modules/employeeDesignation/employeeDesignation.routes";
 import adminAuthRoutes from "./routes/admin-auth.routes";
 import shopOnboardingRoutes from "./routes/shop-onboarding.routes";
 

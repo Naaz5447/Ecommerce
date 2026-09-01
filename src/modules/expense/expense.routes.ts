@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { ExpenseController } from "../controllers/expense.controller";
-import { authenticate } from "../middleware/auth.middleware";
-import { requireRole } from "../middleware/role.middleware";
+import { ExpenseController } from "./expense.controller";
+import { authenticate } from "../../middleware/auth.middleware";
+import { requireRole } from "../../middleware/role.middleware";
 import { ShopUserRole } from "@prisma/client";
 
 const router = Router();

@@ -1,4 +1,4 @@
-import { EmployeeDesignationRepository } from "../repositories/employeeDesignation.repository";
+import { EmployeeDesignationRepository } from "./employeeDesignation.repository";
 
 
 const repo = new EmployeeDesignationRepository();

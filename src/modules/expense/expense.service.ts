@@ -1,4 +1,4 @@
-import { ExpenseRepository } from "../repositories/expense.repository";
+import { ExpenseRepository } from "./expense.repository";
 
 const expenseRepository = new ExpenseRepository();
 
