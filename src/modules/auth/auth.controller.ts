@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { ApiResponse } from "../common/responses/api.response";
-import * as authService from "../services/auth.service";
+import { ApiResponse } from "../../common/responses/api.response";
+import * as authService from "./auth.service";
 
 export const requestOtpController = async (
   req: Request,

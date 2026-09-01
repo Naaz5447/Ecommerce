@@ -1,5 +1,5 @@
 import { AccountRepository } from "./account.repository";
-import { PublicUser } from "../../repositories/user.repository";
+import { PublicUser } from "../auth/auth.repository";
 
 const accountRepository = new AccountRepository();
 

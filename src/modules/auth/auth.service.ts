@@ -1,18 +1,18 @@
-import { findActiveShopByShopId } from "../repositories/shop.repository";
+import { findActiveShopByShopId } from "../../repositories/shop.repository";
 import bcrypt from "bcrypt";
 import { ShopUserRole, UserStatus } from "@prisma/client";
-import { prisma } from "../config/prisma";
-import { generateCode } from "../utils/code-generator";
+import { prisma } from "../../config/prisma";
+import { generateCode } from "../../utils/code-generator";
 
-import { AppError } from "../utils/app-error";
+import { AppError } from "../../utils/app-error";
 
-import { getOtpExpiry } from "../utils/otp";
+import { getOtpExpiry } from "../../utils/otp";
 
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
-} from "../utils/jwt";
+} from "../../utils/jwt";
 
 import {
   createShopUser,
@@ -21,16 +21,16 @@ import {
   findUserByPhone,
   findUserShopMembership,
   toPublicUser,
-} from "../repositories/user.repository";
+} from "./auth.repository";
 
 import {
   deleteOtpByPhone,
   findOtpByPhone,
   updateOtpHash,
   upsertOtp,
-} from "../repositories/otp.repository";
+} from "../../repositories/otp.repository";
 
-import { env } from "../config/env";
+import { env } from "../../config/env";
 
 const ensureActiveUser = (status: UserStatus) => {
   if (status === "BLOCKED") {

@@ -1,6 +1,6 @@
 import { prisma } from "../config/prisma";
 import { AppError } from "./app-error";
-import { PublicUser } from "../repositories/user.repository";
+import { PublicUser } from "../modules/auth/auth.repository";
 export const getCustomerForUser = async (
     user: PublicUser
 ) => {

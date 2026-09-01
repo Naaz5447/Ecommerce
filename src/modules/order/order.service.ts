@@ -1,5 +1,5 @@
-import { PublicUser } from "../repositories/user.repository";
-import { OrderRepository } from "../repositories/order.repository";
+import { PublicUser } from "../auth/auth.repository";
+import { OrderRepository } from "./order.repository";
 
 const orderRepository = new OrderRepository();
 

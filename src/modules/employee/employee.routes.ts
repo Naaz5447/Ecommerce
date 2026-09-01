@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { EmployeeController } from "../controllers/employee.controller";
-import { upload } from "../middleware/upload";
-import { authenticate } from "../middleware/auth.middleware";
+import { EmployeeController } from "./employee.controller";
+import { upload } from "../../middleware/upload";
+import { authenticate } from "../../middleware/auth.middleware";
 
 const router = Router();
 const controller = new EmployeeController();

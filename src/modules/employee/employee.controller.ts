@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { EmployeeService } from "../services/employee.service";
-import { uploadToSupabase } from "../services/storage.service";
+import { EmployeeService } from "./employee.service";
+import { uploadToSupabase } from "../../services/storage.service";
 
 const employeeService = new EmployeeService();
 

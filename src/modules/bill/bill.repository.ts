@@ -1,7 +1,7 @@
-import { prisma } from "../config/prisma";
+import { prisma } from "../../config/prisma";
 import { ShopUserRole } from "@prisma/client";
-import { PublicUser } from "./user.repository";
-import { getCustomerForUser, } from "../utils/customer-access";
+import { PublicUser } from "../../modules/auth/auth.repository";
+import { getCustomerForUser, } from "../../utils/customer-access";
 
 export class BillRepository {
     // ============================================================

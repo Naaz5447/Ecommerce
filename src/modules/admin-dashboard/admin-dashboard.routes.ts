@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { AdminDashboardController } from "../controllers/admin-dashboard.controller";
-import { authenticate } from "../middleware/auth.middleware";
-import { requireRole } from "../middleware/role.middleware";
+import { AdminDashboardController } from "./admin-dashboard.controller";
+import { authenticate } from "../../middleware/auth.middleware";
+import { requireRole } from "../../middleware/role.middleware";
 import { ShopUserRole } from "@prisma/client";
 
 const router = Router();

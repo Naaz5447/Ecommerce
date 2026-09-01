@@ -1,5 +1,5 @@
 import { Prisma, User, ShopUserRole } from "@prisma/client";
-import { prisma } from "../config/prisma";
+import { prisma } from "../../config/prisma";
 
 const publicUserSelect = {
   id: true,

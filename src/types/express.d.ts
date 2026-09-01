@@ -1,4 +1,4 @@
-import { PublicUser } from "../repositories/user.repository";
+import { PublicUser } from "../modules/auth/auth.repository";
 
 declare global {
   namespace Express {
@@ -8,4 +8,4 @@ declare global {
   }
 }
 
-export {};
+export { };

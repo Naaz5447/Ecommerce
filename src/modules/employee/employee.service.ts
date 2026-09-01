@@ -1,6 +1,6 @@
 import crypto from "crypto";
-import { EmployeeRepository } from "../repositories/employee.repository";
-import { getImageUrl } from "../utils/image-url";
+import { EmployeeRepository } from "./employee.repository";
+import { getImageUrl } from "../../utils/image-url";
 
 const employeeRepository = new EmployeeRepository();
 

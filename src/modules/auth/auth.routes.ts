@@ -8,17 +8,17 @@ import {
   requestAdminOtpController,
   verifyOtpController,
   verifyAdminOtpController,
-} from "../controllers/auth.controller";
+} from "./auth.controller";
 
-import { asyncHandler } from "../common/handlers/async.handler";
-import { authenticate } from "../middleware/auth.middleware";
-import { validateRequest } from "../middleware/validate-request";
+import { asyncHandler } from "../../common/handlers/async.handler";
+import { authenticate } from "../../middleware/auth.middleware";
+import { validateRequest } from "../../middleware/validate-request";
 import {
   completeProfileValidator,
   refreshTokenValidator,
   requestOtpValidator,
   verifyOtpValidator,
-} from "../validators/auth.validators";
+} from "../../validators/auth.validators";
 
 const router = Router();
 

@@ -1,4 +1,4 @@
-import { BankRepository } from "../repositories/bank.repository";
+import { BankRepository } from "./bank.repository";
 
 const bankRepository = new BankRepository();
 

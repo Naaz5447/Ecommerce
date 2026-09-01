@@ -1,4 +1,4 @@
-import { AdminDashboardRepository } from "../repositories/admin-dashboard.repository";
+import { AdminDashboardRepository } from "./admin-dashboard.repository";
 
 const adminDashboardRepository =
     new AdminDashboardRepository();

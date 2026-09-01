@@ -1,5 +1,5 @@
-import { PublicUser } from "../repositories/user.repository";
-import { BillRepository } from "../repositories/bill.repository";
+import { PublicUser } from "../../modules/auth/auth.repository";
+import { BillRepository } from "./bill.repository";
 
 const repository = new BillRepository();
 

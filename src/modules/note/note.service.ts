@@ -1,4 +1,4 @@
-import { NoteRepository } from "../repositories/note.repository";
+import { NoteRepository } from "./note.repository";
 
 const noteRepository = new NoteRepository();
 

@@ -1,6 +1,6 @@
 import { prisma } from "../../config/prisma";
 import { ShopUserRole } from "@prisma/client";
-import { PublicUser } from "../../repositories/user.repository";
+import { PublicUser } from "../auth/auth.repository";
 
 export class AccountRepository {
     // ============================================================

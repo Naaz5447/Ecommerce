@@ -14,7 +14,7 @@ import {
     findPublicUserById,
     findUserShopMembership,
     toPublicUser,
-} from "../repositories/user.repository";
+} from "../modules/auth/auth.repository";
 
 import {
     deleteOtpByPhone,

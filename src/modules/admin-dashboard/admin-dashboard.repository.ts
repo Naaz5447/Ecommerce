@@ -1,4 +1,4 @@
-import { prisma } from "../config/prisma";
+import { prisma } from "../../config/prisma";
 
 export class AdminDashboardRepository {
     async getCounts(shopId: string) {

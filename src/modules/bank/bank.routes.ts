@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { BankController } from "../controllers/bank.controller";
-import { authenticate } from "../middleware/auth.middleware";
+import { BankController } from "./bank.controller";
+import { authenticate } from "../../middleware/auth.middleware";
 
 const router = Router();
 const controller = new BankController();
