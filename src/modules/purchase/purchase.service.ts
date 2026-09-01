@@ -1,4 +1,4 @@
-import { PurchaseRepository } from "../repositories/purchase.repository";
+import { PurchaseRepository } from "./purchase.repository";
 
 const purchaseRepository = new PurchaseRepository();
 

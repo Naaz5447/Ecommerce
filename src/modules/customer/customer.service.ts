@@ -1,7 +1,7 @@
-import { AppError } from "../utils/app-error";
-import { CustomerRepository } from "../repositories/customer.repository";
-import { generateCode } from "../utils/code-generator";
-import { PublicUser } from "../repositories/user.repository";
+import { AppError } from "../../utils/app-error";
+import { CustomerRepository } from "./customer.repository";
+import { generateCode } from "../../utils/code-generator";
+import { PublicUser } from "../../repositories/user.repository";
 import { ShopUserRole } from "@prisma/client";
 
 const customerRepository = new CustomerRepository();

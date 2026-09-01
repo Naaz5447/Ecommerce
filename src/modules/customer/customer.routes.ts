@@ -1,14 +1,14 @@
 import { Router } from "express";
-import { CustomerController } from "../controllers/customer.controller";
-import { authenticate } from "../middleware/auth.middleware";
-import { requireRole } from "../middleware/role.middleware";
-import { asyncHandler } from "../common/handlers/async.handler";
-import { validateRequest } from "../middleware/validate-request";
+import { CustomerController } from "./customer.controller";
+import { authenticate } from "../../middleware/auth.middleware";
+import { requireRole } from "../../middleware/role.middleware";
+import { asyncHandler } from "../../common/handlers/async.handler";
+import { validateRequest } from "../../middleware/validate-request";
 import {
   createCustomerValidator,
   customerIdValidator,
   updateCustomerValidator,
-} from "../validators/customer.validators";
+} from "../../validators/customer.validators";
 import { ShopUserRole } from "@prisma/client";
 
 const router = Router();
