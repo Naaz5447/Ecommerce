@@ -1,4 +1,4 @@
-import { TransactionRepository } from "../repositories/transaction.repository";
+import { TransactionRepository } from "./transaction.repository";
 
 const transactionRepository = new TransactionRepository();
 

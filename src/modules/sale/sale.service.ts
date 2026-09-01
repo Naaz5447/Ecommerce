@@ -1,4 +1,4 @@
-import { SaleRepository } from "../repositories/sale.repository";
+import { SaleRepository } from "./sale.repository";
 
 const saleRepository = new SaleRepository();
 

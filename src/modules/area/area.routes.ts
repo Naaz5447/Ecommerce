@@ -1,10 +1,7 @@
 import { Router } from "express";
-
-import { AreaController } from "../controllers/area.controller";
-
-import { authenticate } from "../middleware/auth.middleware";
-
-import { validate } from "../middleware/validation.middleware";
+import { AreaController } from "./area.controller";
+import { authenticate } from "../../middleware/auth.middleware";
+import { validate } from "../../middleware/validation.middleware";
 
 import {
     body,

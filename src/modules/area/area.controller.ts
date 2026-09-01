@@ -1,9 +1,6 @@
-import {
-    Request,
-    Response,
-} from "express";
+import { Request, Response, } from "express";
 
-import { AreaService } from "../services/area.service";
+import { AreaService } from "./area.service";
 
 const areaService =
     new AreaService();

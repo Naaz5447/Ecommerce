@@ -1,4 +1,4 @@
-import { AreaRepository } from "../repositories/area.repository";
+import { AreaRepository } from "./area.repository";
 
 const repository = new AreaRepository();
 
