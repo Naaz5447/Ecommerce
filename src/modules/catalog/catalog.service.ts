@@ -1,5 +1,5 @@
-import { CatalogRepository } from "../repositories/catalog.repository";
-import { getImageUrl } from "../utils/image-url";
+import { CatalogRepository } from "./catalog.repository";
+import { getImageUrl } from "../../utils/image-url";
 
 const catalogRepository = new CatalogRepository();
 

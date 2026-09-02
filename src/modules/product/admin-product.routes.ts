@@ -1,15 +1,15 @@
 import { Router } from "express";
 
-import { AdminProductController } from "../controllers/admin-product.controller";
-import { upload } from "../middleware/upload";
-import { validate } from "../middleware/validate";
+import { AdminProductController } from "./admin-product.controller";
+import { upload } from "../../middleware/upload";
+import { validate } from "../../middleware/validate";
 import {
     createProductSchema,
     updateProductSchema,
-} from "../validations/admin-product.validation";
+} from "../../validations/admin-product.validation";
 
-import { authenticate } from "../middleware/auth.middleware";
-import { requireRole } from "../middleware/role.middleware";
+import { authenticate } from "../../middleware/auth.middleware";
+import { requireRole } from "../../middleware/role.middleware";
 import { ShopUserRole } from "@prisma/client";
 
 

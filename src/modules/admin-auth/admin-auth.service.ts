@@ -1,30 +1,30 @@
 import bcrypt from "bcrypt";
 import { ShopUserRole } from "@prisma/client";
 
-import { AppError } from "../utils/app-error";
-import { getOtpExpiry } from "../utils/otp";
+import { AppError } from "../../utils/app-error";
+import { getOtpExpiry } from "../../utils/otp";
 import {
     generateAccessToken,
     generateRefreshToken,
     verifyRefreshToken,
-} from "../utils/jwt";
+} from "../../utils/jwt";
 
 import {
     findUserByPhone,
     findPublicUserById,
     findUserShopMembership,
     toPublicUser,
-} from "../modules/auth/auth.repository";
+} from "../auth/auth.repository";
 
 import {
     deleteOtpByPhone,
     findOtpByPhone,
     upsertOtp,
-} from "../repositories/otp.repository";
+} from "../../repositories/otp.repository";
 
 import {
     findActiveShopByShopId,
-} from "../repositories/shop.repository";
+} from "../shop/shop.repository";
 
 const issueAdminTokens = (
     userId: string,

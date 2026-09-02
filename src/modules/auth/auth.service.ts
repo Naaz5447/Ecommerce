@@ -1,4 +1,4 @@
-import { findActiveShopByShopId } from "../../repositories/shop.repository";
+import { findActiveShopByShopId } from "../shop/shop.repository";
 import bcrypt from "bcrypt";
 import { ShopUserRole, UserStatus } from "@prisma/client";
 import { prisma } from "../../config/prisma";

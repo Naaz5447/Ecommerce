@@ -7,7 +7,7 @@ import {
 import { AppError } from "../utils/app-error";
 import { verifyAccessToken } from "../utils/jwt";
 import { findPublicUserById } from "../modules/auth/auth.repository";
-import { findActiveShopByShopId } from "../repositories/shop.repository";
+import { findActiveShopByShopId } from "../modules/shop/shop.repository";
 
 export const authenticate = async (
   req: Request,

@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { AdminCategoryController } from "../controllers/admin-category.controller";
-import { upload } from "../middleware/upload";
-import { validate } from "../middleware/validate";
+import { AdminCategoryController } from "./admin-category.controller";
+import { upload } from "../../middleware/upload";
+import { validate } from "../../middleware/validate";
 import {
     createCategorySchema,
     updateCategorySchema
-} from "../validations/admin-category.validation";
-import { authenticate } from "../middleware/auth.middleware";
-import { requireRole } from "../middleware/role.middleware";
+} from "../../validations/admin-category.validation";
+import { authenticate } from "../../middleware/auth.middleware";
+import { requireRole } from "../../middleware/role.middleware";
 import { ShopUserRole } from "@prisma/client";
 
 

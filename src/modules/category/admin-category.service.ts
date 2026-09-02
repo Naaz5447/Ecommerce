@@ -1,5 +1,5 @@
-import { AdminCategoryRepository } from "../repositories/admin-category.repository";
-import { getImageUrl } from "../utils/image-url";
+import { AdminCategoryRepository } from "./admin-category.repository";
+import { getImageUrl } from "../../utils/image-url";
 
 const adminCategoryRepository =
     new AdminCategoryRepository();

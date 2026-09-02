@@ -1,7 +1,7 @@
-import { AppError } from "../utils/app-error";
+import { AppError } from "../../utils/app-error";
 import {
     createShopWithAdmin,
-} from "../repositories/shop.repository";
+} from "./shop.repository";
 
 export const onboardShop = async (data: {
     shopId: string;

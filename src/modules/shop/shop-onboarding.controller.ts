@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { onboardShop } from "../services/shop-onboarding.service";
+import { onboardShop } from "./shop-onboarding.service";
 
 export const onboardShopController = async (
     req: Request,

@@ -1,6 +1,6 @@
 import { prisma } from "../config/prisma";
 
-export const upsertOtp = (
+export const upsertssOtp = (
   shopId: string,
   phone: string,
   otpHash: string,

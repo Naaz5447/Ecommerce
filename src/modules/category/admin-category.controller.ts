@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { AdminCategoryService } from "../services/admin-category.service";
-import { uploadToSupabase } from "../services/storage.service";
+import { AdminCategoryService } from "./admin-category.service";
+import { uploadToSupabase } from "../../services/storage.service";
 
 const adminCategoryService =
     new AdminCategoryService();

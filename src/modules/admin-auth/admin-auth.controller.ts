@@ -3,9 +3,9 @@ import {
     Response,
 } from "express";
 
-import { ApiResponse } from "../common/responses/api.response";
+import { ApiResponse } from "../../common/responses/api.response";
 import * as adminAuthService
-    from "../services/admin-auth.service";
+    from "./admin-auth.service";
 
 export const requestAdminOtpController =
     async (

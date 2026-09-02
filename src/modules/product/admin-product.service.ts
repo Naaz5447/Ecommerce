@@ -1,5 +1,5 @@
-import { AdminProductRepository } from "../repositories/admin-product.repository";
-import { getImageUrl } from "../utils/image-url";
+import { AdminProductRepository } from "./admin-product.repository";
+import { getImageUrl } from "../../utils/image-url";
 
 const adminProductRepository =
     new AdminProductRepository();

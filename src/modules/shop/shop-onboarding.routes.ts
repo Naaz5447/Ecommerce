@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { asyncHandler } from "../common/handlers/async.handler";
-import { onboardShopController } from "../controllers/shop-onboarding.controller";
+import { asyncHandler } from "../../common/handlers/async.handler";
+import { onboardShopController } from "./shop-onboarding.controller";
 
 const router = Router();
 

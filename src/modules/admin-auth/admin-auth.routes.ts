@@ -5,19 +5,19 @@ import {
     verifyAdminOtpController,
     refreshAdminTokenController,
     adminMeController,
-} from "../controllers/admin-auth.controller";
+} from "./admin-auth.controller";
 
-import { asyncHandler } from "../common/handlers/async.handler";
-import { authenticate } from "../middleware/auth.middleware";
-import { requireRole } from "../middleware/role.middleware";
+import { asyncHandler } from "../../common/handlers/async.handler";
+import { authenticate } from "../../middleware/auth.middleware";
+import { requireRole } from "../../middleware/role.middleware";
 
 import {
     requestOtpValidator,
     verifyOtpValidator,
     refreshTokenValidator,
-} from "../validators/auth.validators";
+} from "../../validators/auth.validators";
 
-import { validateRequest } from "../middleware/validate-request";
+import { validateRequest } from "../../middleware/validate-request";
 import { ShopUserRole } from "@prisma/client";
 
 const router = Router();

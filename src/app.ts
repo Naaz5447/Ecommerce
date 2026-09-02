@@ -5,10 +5,10 @@ import morgan from "morgan";
 
 import { healthRoutes } from "./modules/health";
 import authRoutes from "./modules/auth/auth.routes";
-import catalogRoutes from "./routes/catalog.routes";
-import adminCategoryRoutes from "./routes/admin-category.routes";
+import catalogRoutes from "./modules/catalog/catalog.routes";
+import adminCategoryRoutes from "./modules/category/admin-category.routes";
 import path from "path";
-import adminProductRoutes from "./routes/admin-product.routes";
+import adminProductRoutes from "./modules/product/admin-product.routes";
 import adminDashboardRoutes from "./modules/admin-dashboard/admin-dashboard.routes";
 import bankRoutes from "./modules/bank/bank.routes";
 import employeeRoutes from "./modules/employee/employee.routes";
@@ -24,8 +24,8 @@ import billRoutes from "./modules/bill/bill.routes";
 import paymentRoutes from "./modules/payment/payment.routes";
 import areaRoutes from "./modules/area/area.routes";
 import empDesignationRoutes from "./modules/employeeDesignation/employeeDesignation.routes";
-import adminAuthRoutes from "./routes/admin-auth.routes";
-import shopOnboardingRoutes from "./routes/shop-onboarding.routes";
+import adminAuthRoutes from "./modules/admin-auth/admin-auth.routes";
+import shopOnboardingRoutes from "./modules/shop/shop-onboarding.routes";
 
 
 import { notFoundHandler } from "./common/handlers/not-found.handler";

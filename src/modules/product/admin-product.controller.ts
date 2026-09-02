@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { AdminProductService } from "../services/admin-product.service";
-import { uploadToSupabase } from "../services/storage.service";
+import { AdminProductService } from "./admin-product.service";
+import { uploadToSupabase } from "../../services/storage.service";
 
 const adminProductService = new AdminProductService();
 

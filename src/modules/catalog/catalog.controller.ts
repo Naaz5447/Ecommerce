@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { CatalogService } from "../services/catalog.service";
-import { prisma } from "../config/prisma";
+import { CatalogService } from "./catalog.service";
+import { prisma } from "../../config/prisma";
 
 const catalogService = new CatalogService();
 
