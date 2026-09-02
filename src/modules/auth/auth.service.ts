@@ -28,7 +28,7 @@ import {
   findOtpByPhone,
   updateOtpHash,
   upsertOtp,
-} from "../../repositories/otp.repository";
+} from "../admin-auth/otp.repository";
 
 import { env } from "../../config/env";
 

@@ -20,7 +20,7 @@ import {
     deleteOtpByPhone,
     findOtpByPhone,
     upsertOtp,
-} from "../../repositories/otp.repository";
+} from "./otp.repository";
 
 import {
     findActiveShopByShopId,
