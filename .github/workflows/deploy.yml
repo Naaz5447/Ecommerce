@@ -1,0 +1,28 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Deploy Ecommerce Backend
+        run: |
+          cd /opt/ecommerce/source/Ecommerce
+
+          git fetch origin
+          git reset --hard origin/main
+
+          docker build -t ecommerce-backend:test .
+
+          cd /opt/ecommerce/deploy
+
+          docker compose up -d --force-recreate backend
+
+          docker image prune -f
+
+          curl --fail http://127.0.0.1:5000/health
