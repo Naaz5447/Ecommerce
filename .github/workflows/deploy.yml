@@ -25,4 +25,18 @@ jobs:
 
           docker image prune -f
 
-          curl --fail http://127.0.0.1:5000/health
+          echo "Waiting for backend to become ready..."
+
+          for i in {1..12}; do
+            if curl --fail --silent http://127.0.0.1:5000/health; then
+              echo "Backend is healthy."
+              exit 0
+            fi
+
+            echo "Backend not ready yet. Waiting 5 seconds..."
+            sleep 5
+          done
+
+          echo "Backend failed health check."
+          docker logs --tail 100 ecommerce-backend
+          exit 1
